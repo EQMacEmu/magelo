@@ -29,7 +29,7 @@ Boston, MA  02110-1301, USA.
 Installation
 -----------------------------------------------------------------
 Copy all of the project files to the directory of your choosing. 
-Edit the �/includes/config.php�  file with your database 
+Edit the �/include/config.php�  file with your database
 information as the minimum settings. Additional settings can be 
 altered in the config file to hide portions of the software from 
 your users. 
