@@ -18,7 +18,6 @@
     <br>
 
     <font style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;'>
-    <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#E42217;' href='../forums'>Back to Forum | </a> 
     <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='signaturebuilder.php'>{L_SIGBUILD}</a> &nbsp;|&nbsp; 
     <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='charmove.php'>{L_CHARMOVE}</a> &nbsp;|&nbsp; 
     <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='bazaar.php'>{L_BAZAAR}</a> &nbsp;|&nbsp; 
