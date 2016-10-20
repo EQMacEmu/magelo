@@ -101,7 +101,7 @@ $allitems = array();
 
 // pull characters inventory slotid is loaded as
 // "myslot" since items table also has a slotid field.
-$query = "SELECT items.*, character_inventory.augslot1, character_inventory.augslot2, character_inventory.augslot3, character_inventory.augslot4, character_inventory.augslot5, character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
+$query = "SELECT items.*, /*character_inventory.augslot1, character_inventory.augslot2, character_inventory.augslot3, character_inventory.augslot4, character_inventory.augslot5, */character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
 $results = mysql_query($query);
 // loop through inventory results saving Name, Icon, and preload HTML for each
@@ -309,13 +309,13 @@ foreach ($allitems as $value) {
       'ID' => $value->id(),
       'HTML' => $value->html())
     );
-    for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
+    /*for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
       $template->assign_block_vars("item.augment", array( 	   
         'AUG_NAME' => $value->augname($i),
         'AUG_ID' => $value->augid($i),
         'AUG_HTML' => $value->aughtml($i))
       );
-    }
+    }*/
 }
 
 
