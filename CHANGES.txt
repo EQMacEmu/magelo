@@ -1,3 +1,29 @@
+v2.42
+----------------------------------------------------------------------
+February 6, 2017 - Applied the stat hard-cap of 255 to hitpoint and
+                   mana calculations. Over-cap stats will still be
+                   displayed (this can easily be changed), but will
+                   not contribute to displayed hitpoints and mana.
+                   These changes are in the GetMaxHP and GetMaxMana
+                   functions in includes/calculatestats.php. They 
+                   will need to be updated once AAs raise the stat 
+                   caps. (Pithy)
+
+                   Corrected racial and class resist adjustments in
+                   includes/calculatestats.php. These adjustments are
+                   accurate to level 60, but technically should scale
+                   with level. To be accurate to level 65, they will
+                   need to be modified in PoP (see comments for 
+                   details). (Pithy)
+
+                   Changed GetMaxHP and GetHPBase in 
+                   includes/calculatestats.php to modified versions 
+                   of Zygor's Alla'Kabor functions, which were 
+                   calibrated to Al'Kabor data. These functions will
+                   need to be updated once the Natural Durability and
+                   Physical Enhancement AAs go live. (Pithy)
+                   
+
 v2.41
 ----------------------------------------------------------------------
 September 28, 2014 - added a database stats gathering tool. Uncomment

@@ -18,7 +18,7 @@
  
  
  
- if ( !defined('INCHARBROWSER') )
+if ( !defined('INCHARBROWSER') )
 {
 	die("Hacking attempt");
 }
@@ -457,222 +457,205 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 	return floor($AC);
 }
 
+/* 
+====================================================================
+Class- and race-based resist adjustements modified by Pithy, 2/6/17.
+====================================================================
+*/ 
 
-$PRbyClass=array(0,0,0,0,4,0,0,0,8,0,0,0,0,0,0,0);
-$MRbyClass=array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-$DRbyClass=array(0,0,8,0,4,0,0,0,0,0,0,0,0,0,4,0);
-$FRbyClass=array(0,0,0,4,0,0,8,0,0,0,0,0,0,0,0,0);
-$CRbyClass=array(0,0,0,4,0,0,0,0,0,0,0,0,0,0,4,0); 
+// CLASS-BASED RESIST ADJUSTMENTS
+
+/* class indices:
+1 - warrior
+2 - cleric
+3 - paladin
+4 - ranger
+5 - shadow knight
+6 - druid
+7 - monk
+8 - bard
+9 - rogue
+10 - shaman
+11 - necromancer
+12 - wizard
+13 - magician
+14 - enchanter
+15 - beastlord
+16 - berserker
+*/
+
+/*
+Bonuses are level-dependent: 4 (or 8) + floor(level/4). 
+That gives 19 (or 23) at level 60, updated to 20 (or 24) at 65.
+The warrior MR bonus is different: 21 at 60, 24 at 65.
+The arrays below have the level 60 values.
+*/
+
+$PRbyClass=array(0,0,0,0,19,0,0,0,23,0,0,0,0,0,0,0);
+$MRbyClass=array(21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+$DRbyClass=array(0,0,23,0,19,0,0,0,0,0,0,0,0,0,19,0);
+$FRbyClass=array(0,0,0,19,0,0,23,0,0,0,0,0,0,0,0,0);
+$CRbyClass=array(0,0,0,19,0,0,0,0,0,0,0,0,0,0,19,0); 
+
+
+// RACE-BASED RESIST ADJUSTMENTS
+
+/* race numbers:
+1 - human
+2 - barbarian
+3 - erudite
+4 - wood elf
+5 - high elf
+6 - dark elf
+7 - half elf
+8 - dwarf
+9 - troll
+10 - ogre
+11 - halfling
+12 - gnome
+128 - iksar
+*/
+
 function PRbyRace($race) {
-       if($race == 8)    return 20; 
-  else if($race == 330)  return 30; 
-  else if($race == 74) return 30; 
-  else if($race == 11) return 20; 
+       if($race == 8)   return 20; // dwarf
+  else if($race == 11)  return 20; // halfling
   else return 15;
 }
 
 function MRbyRace($race) {
-       if($race == 8)    return 30;
-  else if($race == 3)  return 30;
-  else if($race == 330)  return 30;
-  else if($race == 74) return 30;
+       if($race == 3)   return 30; // erudite
+  else if($race == 8)   return 30; // dwarf
+  else if($race == 128) return 33; // iksar
   else return 25;
 }
 
 function DRbyRace($race) {
-       if($race == 3)  return 10;
-  else if($race == 11) return 20;
+       if($race == 3)   return 10; // erudite
+  else if($race == 11)  return 20; // halfling
   else return 15;
 }
 
 function FRbyRace($race) {
-       if($race == 128) return 30;
-  else if($race == 9) return 5;
+       if($race == 9)   return  5; // troll
+  else if($race == 128) return 30; // iksar
   else return 25;	
 }
 
 function CRbyRace($race) {
-       if($race == 2) return 35;
-  else if($race == 128)     return 15;
+       if($race == 2)   return 35; // barbarian
+  else if($race == 128) return 15; // iksar
   else return 25;
 }
 
+/* 
+===================================================================
+End Pithy's class- and race-based resist adjustement modifications.
+===================================================================
+*/ 
 
-/* replaced by new sod hp/mana/end calculations
-//function copied/converted from EQEMU sourcecode may 2, 2009
-function GetClassLevelFactor($mlevel,$class) {
-	$multiplier = 0;
+/* 
+=========================================================================
+Max hitpoint calculation adjustments based on Zygor's Alla'Kabor formula.
+Implemented by Pithy, 2/6/17.
+=========================================================================
+*/ 
 
-	$WARRIOR = 1;	
-	$CLERIC = 2;
-	$PALADIN = 3;
-	$RANGER = 4;
-	$SHADOWKNIGHT = 5;
-	$DRUID = 6;
-	$MONK = 7;
-	$BARD = 8;
-	$ROGUE = 9;
-	$SHAMAN = 10;
-	$NECROMANCER = 11;
-	$WIZARD = 12;
-	$MAGICIAN = 13;
-	$ENCHANTER = 14;
-	$BEASTLORD = 15;
-	$BERSERKER = 16;
-
-	switch($class)
-	{
-		case $WARRIOR:{
-			if ($mlevel < 20)
-				$multiplier = 220;
-			else if ($mlevel < 30)
-				$multiplier = 230;
-			else if ($mlevel < 40)
-				$multiplier = 250;
-			else if ($mlevel < 53)
-				$multiplier = 270;
-			else if ($mlevel < 57)
-				$multiplier = 280;
-			else if ($mlevel < 60)
-				$multiplier = 290;
-			else if ($mlevel < 70)
-				$multiplier = 300;
-			else 
-				$multiplier = 311;
-			break;
-		}
-		case $DRUID:
-		case $CLERIC:
-		case $SHAMAN:{
-			if ($mlevel < 70)
-				$multiplier = 150;
-			else
-				$multiplier = 157;
-			break;
-		}
-		case $BERSERKER:
-		case $PALADIN:
-		case $SHADOWKNIGHT:{
-			if ($mlevel < 35)
-				$multiplier = 210;
-			else if ($mlevel < 45)
-				$multiplier = 220;
-			else if ($mlevel < 51)
-				$multiplier = 230;
-			else if ($mlevel < 56)
-				$multiplier = 240;
-			else if ($mlevel < 60)
-				$multiplier = 250;
-			else if ($mlevel < 68)
-				$multiplier = 260;
-			else
-				$multiplier = 270;
-			break;
-		}
-		case $MONK:
-		case $BARD:
-		case $ROGUE:
-		case $BEASTLORD:{
-			if ($mlevel < 51)
-				$multiplier = 180;
-			else if ($mlevel < 58)
-				$multiplier = 190;
-			else if ($mlevel < 70)
-				$multiplier = 200;
-			else
-				$multiplier = 210;
-			break;
-		}
-		case $RANGER:{
-			if ($mlevel < 58)
-				$multiplier = 200;
-			else if ($mlevel < 70)
-				$multiplier = 210;
-			else
-				$multiplier = 220;
-			break;
-		}
-		case $MAGICIAN:
-		case $WIZARD:
-		case $NECROMANCER:
-		case $ENCHANTER:{
-			if ($mlevel < 70)
-				$multiplier = 120;
-			else
-				$multiplier = 127;
-			break;
-		}
-		default:{
-			if ($mlevel < 35)
-				$multiplier = 210;
-			else if ($mlevel < 45)
-				$multiplier = 220;
-			else if ($mlevel < 51)
-				$multiplier = 230;
-			else if ($mlevel < 56)
-				$multiplier = 240;
-			else if ($mlevel < 60)
-				$multiplier = 250;
-			else
-				$multiplier = 260;
-			break;
-		}
-	}
-	return $multiplier;
+// This function will need to be modified in Luclin for the ND and PE AAs.
+// min(255,$sta) should be changed to $sta when the 255 stat cap is lifted.
+function GetMaxHP($level,$class,$sta,$ihp)
+{
+    $base_hp = GetHPBase($level,$class,min(255,$sta));
+    $hp = floor($base_hp) + floor($ihp);
+    return $hp;
 }
 
-//function copied/converted from EQEMU sourcecode may 2, 2009
-function GetMaxHP($mlevel,$class,$sta,$ihp)
-{
-	$lm = GetClassLevelFactor($mlevel,$class);
-	$Post255 = 0;
-	if(($sta-255)/2 > 0)
-		$Post255 = ($sta-255)/2;
-	else
-		$Post255 = 0;
-		
-	$base_hp = (5)+($mlevel*$lm/10) + ((($sta-$Post255)*$mlevel*$lm/3000)) + (($Post255*$mlevel)*$lm/6000);
-
-	$base_hp += $ihp;
-	return floor($base_hp);
-}*/
-
-//function copied/converted from EQEMU sourcecode oct 26, 2010 
-function GetMaxHP($mlevel,$class,$sta,$ihp) 
+// This function will need to be modified in Luclin for the ND and PE AAs.
+function GetHPBase($level,$class,$sta)
 { 
-        $ClassHPFactor = array( 1 => 300,  2 => 264,  3 => 288,  4 => 276,
-                                5 => 288,  6 => 240,  7 => 255,  8 => 264,
-                                9 => 255,  10 => 255, 11 => 240, 12 => 240, 
-                                13 => 240, 14 => 240, 15 => 255, 16 => 255
-                         );
+    $lm = floatval(GetLM($class,$level));
+    $post_255_sta = ((max(0,($sta-255))));
+    $staGain = floor(($sta - round($post_255_sta/2))*10/3);
+    $hp_from_level = ($level*$lm);
+    $hp_from_sta = ($level*$lm*$staGain/1000);
+    $base_hp = 5 + $hp_from_level + $hp_from_sta;
+    return $base_hp;
+}
 
-        $Post255 = 0; 
+// This function gets the level multiplier used to calculate base hitpoints.
+function getLM($class, $level) {
 
-        if((($sta- 255) / 2) > 0) 
-                $Post255 = (($sta- 255) / 2); 
-        else 
-                $Post255 = 0; 
+    $className = getClassName($class);
 
-        $hp_factor = max(240,$ClassHPFactor[$class]); 
-                
-        if ($mlevel < 41) { 
-                $base_hp = (5 + ($mlevel * $hp_factor / 12) + 
-                        (($sta- $Post255) * $level * $hp_factor / 3600)); 
-        } 
-        else if ($mlevel < 81) { 
-                $base_hp = (5 + (40 * hp_factor / 12) + (($mlevel - 40) * $hp_factor / 6) + 
-                        (($sta- $Post255) * $hp_factor / 90) + 
-                        (($sta- $Post255) * ($mlevel - 40) * $hp_factor / 1800)); 
-        } 
-        else { 
-                $base_hp = (5 + (80 * $hp_factor / 8) + (($mlevel - 80) * $hp_factor / 10) + 
-                        (($sta- $Post255) * $hp_factor / 90) + 
-                        (($sta- $Post255) * $hp_factor / 45)); 
-        } 
+    if($className == 'Monk' || $className == 'Rogue' || $className == 'Beastlord' || $className == 'Bard') {
+    if($level > 57) return 20;
+    if($level > 50) return 19;
+    return 18;
+    }
+     
+    if($className == 'Cleric' || $className == 'Druid' || $className == 'Shaman') {
+    return 15;
+    }
+     
+    if($className == 'Magician' || $className == 'Necromancer' || $className == 'Enchanter' || $className == 'Wizard') {
+    return 12;
+    }
+     
+    if($className == 'Ranger') {
+    if($level > 57) return 21; 
+    return 20;
+    }
+     
+    if($className == 'Shadow Knight' || $className == 'Shadowknight' || $className == 'Paladin') {
+    if($level > 59) return 26; 
+    if($level > 55) return 25; 
+    if($level > 50) return 24; 
+    if($level > 44) return 23; 
+    if($level > 34) return 22; 
+    return 21;
+    }
+     
+    if($className == 'Warrior') {
+    if($level > 59) return 30; 
+    if($level > 56) return 29;
+    if($level > 52) return 28; 
+    if($level > 39) return 27; 
+    if($level > 29) return 25; 
+    if($level > 19) return 23; 
+    return 22;
+    }
+}
 
-        $base_hp += $ihp; 
-        return floor($base_hp); 
-} 
+// This function maps a class number into the corresponding class name.
+// Called by getLM. 
+function getClassName($class) {
+    switch($class) {
+     case '1':  return "Warrior";      break;
+     case '2':  return "Cleric";       break;
+     case '3':  return "Paladin";      break;
+     case '4':  return "Ranger";       break;
+     case '5':  return "Shadow Knight"; break;
+     case '6':  return "Druid";        break;
+     case '7':  return "Monk";         break;
+     case '8':  return "Bard";         break;
+     case '9':  return "Rogue";        break;
+     case '10': return "Shaman";       break;
+     case '11': return "Necromancer";  break;
+     case '12': return "Wizard";       break;
+     case '13': return "Magician";     break;
+     case '14': return "Enchanter";    break;
+     case '15': return "Beastlord";    break;
+     case '16': return "Berserker";    break;   
+     default:   return "Unknown Class"; break;
+    }
+}
+
+/* 
+=================================================
+End Pithy's max hitpoint calculation adjustments.
+=================================================
+*/ 
+
+
 
 //function copied/converted from EQEMU sourcecode may 2, 2009
 function GetCasterClass($class){
@@ -771,9 +754,19 @@ function GetMaxMana($level,$class,$int,$wis,$imana)
 	return floor($max_mana);
 }*/
 
+/* 
+=============================================================================
+Pithy update, 2/6/17: applied the 255 int/wis hardcap in the first two lines.
+=============================================================================
+*/ 
+
 //function copied/converted from EQEMU sourcecode oct 26, 2010 
 function GetMaxMana($level,$class,$int,$wis,$imana) 
 { 
+        // The next two lines should be updated when AAs lift the stat cap.
+        $int = min(255,$int);
+        $wis = min(255,$wis);
+        
         $WisInt = 0; 
         $MindLesserFactor = 0; 
         $MindFactor = 0; 
@@ -846,6 +839,14 @@ function GetMaxMana($level,$class,$int,$wis,$imana)
 
         return floor($max_mana); 
 } 
+
+/* 
+=============================================
+End Pithy's 255 int/wis hardcap modification.
+=============================================
+*/ 
+
+
 
 /* replaced by new sod hp/mana/end calculations
 function GetMaxEndurance($STR,$STA,$DEX,$AGI,$level,$iendurance)
