@@ -101,23 +101,13 @@ $allitems = array();
 
 // pull characters inventory slotid is loaded as
 // "myslot" since items table also has a slotid field.
-$query = "SELECT items.*, /*character_inventory.augslot1, character_inventory.augslot2, character_inventory.augslot3, character_inventory.augslot4, character_inventory.augslot5, */character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
+$query = "SELECT items.*, character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
 $results = mysql_query($query);
 // loop through inventory results saving Name, Icon, and preload HTML for each
 // item to be pasted into its respective div later
 while ($row = mysql_fetch_array($results)) {
   $tempitem = new item($row);
-  for ($i = 1; $i <= 5; $i++) {
-    if ($row["augslot".$i]) {
-      $query = "SELECT * from items where id = ".$row["augslot".$i]." LIMIT 1";
-      if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-      $augresults = mysql_query($query);
-      $augrow = mysql_fetch_array($augresults);
-      $tempitem->addaug($augrow);
-      $itemstats->additem($augrow);
-    }
-  }
 
   if ($tempitem->type() == EQUIPMENT)
     $itemstats->additem($row);

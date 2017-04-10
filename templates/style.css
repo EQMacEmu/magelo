@@ -156,6 +156,9 @@ INPUT.search {
   background-image: url(../images/button.gif);
   margin: 0px;
 }
+.FreeButton:hover {
+	cursor: pointer;
+}
 
 /* the byline in the footer*/
 .Footer {
@@ -204,6 +207,9 @@ INPUT.search {
   padding:          0px;
   border-collapse: collapse; 
 }
+.StatTable td:hover {
+	cursor: default;
+}
 
 /* table for augments */
 .AugTable {
@@ -237,7 +243,9 @@ INPUT.search {
   padding: 0;
   position: absolute;
 }
-
+.Slot:hover {
+	cursor: pointer;
+}
 
 /* coin boxes in bank and innventory */
 .Coin {
