@@ -1,8 +1,9 @@
 v2.43
 ----------------------------------------------------------------------
-November 5, 2017 - Applied the hard-cap of 255 to *displayed* stats.
+November 5, 2017 - Applied the hard-cap of 255 to displayed stats.
                    Users were confused about whether overcap stats
-                   were being counted toward max hitpoints and mana.
+                   were being counted toward max hitpoints and mana
+                   (they weren't, and still aren't).
                    (Pithy)
 
                    Rewrote GetMaxMana() to roughly match the mana
