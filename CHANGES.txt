@@ -1,3 +1,17 @@
+v2.43
+----------------------------------------------------------------------
+November 5, 2017 - Applied the hard-cap of 255 to displayed stats.
+                   Users were confused about whether overcap stats
+                   were being counted toward max hitpoints and mana
+                   (they weren't, and still aren't).
+                   (Pithy)
+
+                   Rewrote GetMaxMana() to roughly match the mana
+                   function in Zygor's AllaKabor. The source code
+                   wasn't available, so the new function uses 
+                   coefficients fit to AllaKabor data by regression.
+                   (Pithy)
+
 v2.42
 ----------------------------------------------------------------------
 February 6, 2017 - Applied the stat hard-cap of 255 to hitpoint and
@@ -22,7 +36,6 @@ February 6, 2017 - Applied the stat hard-cap of 255 to hitpoint and
                    calibrated to Al'Kabor data. These functions will
                    need to be updated once the Natural Durability and
                    Physical Enhancement AAs go live. (Pithy)
-                   
 
 v2.41
 ----------------------------------------------------------------------
@@ -55,7 +68,6 @@ September 26, 2014 - Akkadius removed the character blob from the
                      this as an opportunity to swap from a WHERE join to
                      a standard JOIN. (Maudigan)
 
-
 v2.3
 ----------------------------------------------------------------------
 February 24, 2014 - Changed item icons to use PNG instead of GIF (Maudigan/Warmonger)
@@ -66,14 +78,10 @@ February 25, 2014 - Added Heroic stats and aug types (Kinglykrab)
                     Added infinite charge text to items (Kinglykrab)
                     Added Drakkin/Powersource to bazaar (Kinglykrab)
 
-
-
 v2.25 
 ----------------------------------------------------------------------
 February 9, 2014 - Fixed charm item type getting set wrong (Maudigan)
 February 12, 2014 - Added/Updated item icons 2588-4819. (Maudigan)
-
-
 
 v1.0 - v2.24
 ----------------------------------------------------------------------
