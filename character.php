@@ -262,11 +262,12 @@ if (!$mypermission['bank']) {
 	    );
 	}
 }
+*/
 
 //dump items WINDOWS
 foreach ($allitems as $value) {
   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-  if ($value->type() == BANK && $mypermission['bank']) continue;
+  //if ($value->type() == BANK && $mypermission['bank']) continue;
     $template->assign_block_vars("item", array(
       'SLOT' => $value->slot(),	   
       'NAME' => $value->name(),
@@ -274,7 +275,7 @@ foreach ($allitems as $value) {
       'HTML' => $value->html())
     );
 }
-*/
+
 
 
 $template->pparse('character');
