@@ -145,7 +145,7 @@ function display(type, id, prefix) {
 
 
           <!-- BEGIN invitem --> 
-          <div onmouseover="display(0, {invitem.SLOT}, 'slot');if ({invitem.ISBAG}) display(0, {invitem.SLOT}, 'bag');" class='Slot slotloc{invitem.SLOT}' style='background-image: url(images/items/item_{invitem.ICON}.png);'></div>
+          <div onclick="display(0, {invitem.SLOT}, 'slot');if ({invitem.ISBAG}) display(0, {invitem.SLOT}, 'bag');" class='Slot slotloc{invitem.SLOT}' style='background-image: url(images/items/item_{invitem.ICON}.png);'></div>
           <!-- END invitem --> 
         </div> 
       </div> 
