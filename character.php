@@ -157,23 +157,11 @@ $template->assign_vars(array(
   'INT' => ($baseINT+$itemstats->INT()),
   'WIS' => ($baseWIS+$itemstats->WIS()),
   'CHA' => ($baseCHA+$itemstats->CHA()),
-  'HSTR' => ($itemstats->HSTR()),  //added 7 lines 2/25/2014
-  'HSTA' => ($itemstats->HSTA()),  
-  'HDEX' => ($itemstats->HDEX()),  
-  'HAGI' => ($itemstats->HAGI()),  
-  'HINT' => ($itemstats->HINT()),  
-  'HWIS' => ($itemstats->HWIS()),  
-  'HCHA' => ($itemstats->HCHA()), 
   'POISON' => (PRbyRace($race)+$PRbyClass[$class]+$itemstats->PR()),
   'FIRE' => (FRbyRace($race)+$FRbyClass[$class]+$itemstats->FR()),
   'MAGIC' => (MRbyRace($race)+$MRbyClass[$class]+$itemstats->MR()),
   'DISEASE' => (DRbyRace($race)+$DRbyClass[$class]+$itemstats->DR()),
   'COLD' => (CRbyRace($race)+$CRbyClass[$class]+$itemstats->CR()),
-  'HPOISON' => $itemstats->HPR(),   //added 5 lines 2/25/2014
-  'HFIRE' => $itemstats->HFR(), 
-  'HMAGIC' => $itemstats->HMR(), 
-  'HDISEASE' => $itemstats->HDR(), 
-  'HCOLD' => $itemstats->HCR(), 
   'WEIGHT' => round($itemstats->WT()/10),
   'PP' => (($mypermission['coininventory'])?$language['MESSAGE_DISABLED']:$pp),
   'GP' => (($mypermission['coininventory'])?$language['MESSAGE_DISABLED']:$gp),
@@ -183,8 +171,6 @@ $template->assign_vars(array(
   'BGP' => (($mypermission['coinbank'])?$language['MESSAGE_DISABLED']:$bgp),
   'BSP' => (($mypermission['coinbank'])?$language['MESSAGE_DISABLED']:$bsp),
   'BCP' => (($mypermission['coinbank'])?$language['MESSAGE_DISABLED']:$bcp),
-
-  
  
   'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
   'L_HEADER_BANK' => $language['CHAR_BANK'],
@@ -204,23 +190,11 @@ $template->assign_vars(array(
   'L_INT' => $language['CHAR_INT'],
   'L_WIS' => $language['CHAR_WIS'],
   'L_CHA' => $language['CHAR_CHA'],
-  'L_HSTR' => $language['CHAR_HSTR'],   //added 7 lines 2/25/2014
-  'L_HSTA' => $language['CHAR_HSTA'], 
-  'L_HDEX' => $language['CHAR_HDEX'], 
-  'L_HAGI' => $language['CHAR_HAGI'], 
-  'L_HINT' => $language['CHAR_HINT'], 
-  'L_HWIS' => $language['CHAR_HWIS'], 
-  'L_HCHA' => $language['CHAR_HCHA'], 
   'L_POISON' => $language['CHAR_POISON'],
   'L_MAGIC' => $language['CHAR_MAGIC'],
   'L_DISEASE' => $language['CHAR_DISEASE'],
   'L_FIRE' => $language['CHAR_FIRE'],
   'L_COLD' => $language['CHAR_COLD'],
-  'L_HPOISON' => $language['CHAR_HPOISON'],    //added 5 lines 2/25/2014
-  'L_HMAGIC' => $language['CHAR_HMAGIC'], 
-  'L_HDISEASE' => $language['CHAR_HDISEASE'], 
-  'L_HFIRE' => $language['CHAR_HFIRE'], 
-  'L_HCOLD' => $language['CHAR_HCOLD'], 
   'L_WEIGHT' => $language['CHAR_WEIGHT'],
   'L_AAS' => $language['BUTTON_AAS'],
   'L_KEYS' => $language['BUTTON_KEYS'],
@@ -276,7 +250,7 @@ foreach ($allitems as $value) {
   } 
 }
 
-
+/* (bank display disabled)
 //dump bank items ICONS
 if (!$mypermission['bank']) {
 	foreach ($allitems as $value) {
@@ -289,7 +263,7 @@ if (!$mypermission['bank']) {
 	}
 }
 
-//dump items WINDWOS
+//dump items WINDOWS
 foreach ($allitems as $value) {
   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
   if ($value->type() == BANK && $mypermission['bank']) continue;
@@ -299,15 +273,8 @@ foreach ($allitems as $value) {
       'ID' => $value->id(),
       'HTML' => $value->html())
     );
-    /*for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
-      $template->assign_block_vars("item.augment", array( 	   
-        'AUG_NAME' => $value->augname($i),
-        'AUG_ID' => $value->augid($i),
-        'AUG_HTML' => $value->aughtml($i))
-      );
-    }*/
 }
-
+*/
 
 
 $template->pparse('character');
