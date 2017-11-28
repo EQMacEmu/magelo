@@ -755,44 +755,12 @@ function GetMaxMana($level,$class,$int,$wis,$imana)
 }*/
 
 /* 
-==============================================================================
-Pithy update, 11/5/17: applied the 255 int/wis hardcap in the first two lines.
-Updated (level,int_or_wis) -> max_mana mapping to a simple regression formula
-fit to data from Zygor's AllaKabor mana function (for which source code was
-unavailable).
-==============================================================================
+=============================================================================
+Pithy update, 2/6/17: applied the 255 int/wis hardcap in the first two lines.
+=============================================================================
 */ 
-//function copied/converted from EQEMU sourcecode oct 26, 2010
-function GetMaxMana($level,$class,$int,$wis,$imana) 
-{ 
-        // The next two lines should be updated when AAs lift the stat cap.
-        $capped_int = min(255,$int);
-        $capped_wis = min(255,$wis);
-        
-        $base_mana = 0; 
-        switch(GetCasterClass($class)) 
-        { 
-                case 'I': 
-                        $base_mana = 3.8505*$level + 0.1868*$level*min(200,$capped_int) + 0.0907*$level*(max(200,$capped_int)-200);
-                        $max_mana = $base_mana + $imana; 
-                        break;
 
-                case 'W': 
-                        $base_mana = 3.8505*$level + 0.1868*level*min(200,$capped_wis) + 0.0907*$level*(max(200,$capped_wis)-200);
-                        $max_mana = $base_mana + $imana;
-                        break;
-                                
-                case 'N':
-                        $max_mana = 0;
-                        break;
-        } 
-
-        return ($integer) floor($max_mana);
-} 
-
-/*
-
-//old function copied/converted from EQEMU sourcecode oct 26, 2010
+//function copied/converted from EQEMU sourcecode oct 26, 2010 
 function GetMaxMana($level,$class,$int,$wis,$imana) 
 { 
         // The next two lines should be updated when AAs lift the stat cap.
@@ -871,7 +839,6 @@ function GetMaxMana($level,$class,$int,$wis,$imana)
 
         return floor($max_mana); 
 } 
-*/
 
 /* 
 =============================================
