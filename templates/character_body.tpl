@@ -84,20 +84,17 @@ function display(type, id, prefix) {
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_STR}<br>{L_STA}<br>{L_AGI}<br>{L_DEX}</td> 
-                <!-- <td width='100%'>{STR}<br>{STA}<br>{AGI}<br>{DEX}</td> -->
-                <td width='100%'><font color='#00FF00'>{STR} <font color='Gold'>+{HSTR}</font><br>{STA} <font color='Gold'>+{HSTA}</font><br>{AGI} <font color='Gold'>+{HAGI}</font><br>{DEX} <font color='Gold'>+{HDEX}</font></font></td>
+                <td width='100%'><font color='#00FF00'>{STR}<br>{STA}<br>{AGI}<br>{DEX}</font></td>
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_WIS}<br>{L_INT}<br>{L_CHA}</td> 
-                <!-- <td width='100%'>{WIS}<br>{INT}<br>{CHA}</td> -->
-                <td width='100%'><font color='#00FF00'>{WIS} <font color='Gold'>+{HWIS}</font><br>{INT} <font color='Gold'>+{HINT}</font><br>{CHA} <font color='Gold'>+{HCHA}</font></font></td> 
+                <td width='100%'><font color='#00FF00'>{WIS}<br>{INT}<br>{CHA}</font></td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
-                <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}</td> 
-                <!-- <td>{POISON}<br>{MAGIC}<br>{DISEASE}<br>{FIRE}<br>{COLD}</td> -->
-                <td><font color='#00FF00'>{POISON} <font color='Gold'>+{HPOISON}</font><br>{MAGIC} <font color='Gold'>+{HMAGIC}</font><br>{DISEASE} <font color='Gold'>+{HDISEASE}</font><br>{FIRE} <font color='Gold'>+{HFIRE}</font><br>{COLD} <font color='Gold'>+{HCOLD}</font></font></td> 
+                <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}</td>
+                <td><font color='#00FF00'>{POISON}<br>{MAGIC}<br>{DISEASE}<br>{FIRE}<br>{COLD}</font></td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
