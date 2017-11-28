@@ -75,26 +75,52 @@ function display(type, id, prefix) {
               <tr><td colspan='2' style='height: 3px'></td></tr> 
               <tr><td colspan='2' class="player-race">{RACE}</td></tr> 
               <tr><td colspan='2' style='height: 3px'></td></tr> 
-              <tr><td colspan='2'><span class="player-level">{LEVEL}</span> <span class="player-class">{CLASS}</span><br><span class="player-deity">{DEITY}</span></td></tr> 
+              <tr><td colspan='2'>
+                  <span class="player-level">{LEVEL}</span> 
+                  <span class="player-class">{CLASS}</span><br>
+                  <span class="player-deity">{DEITY}</span>
+                  </td>
+              </tr> 
               <tr><td colspan='2' style='height: 3px'></td></tr> 
               <tr> 
                 <td>{L_HP}<br>{L_MANA}<br>{L_ENDR}<br>{L_AC}<br>{L_ATK}</td> 
-                <td width='100%'><span class="player-hp">{HP}</span><br><span class="player-mana">{MANA}</span><br><span class="player-end">{ENDR}</span><br><span class="player-ac">{AC}</span><br><span class="player-atk">{ATK}</span></td> 
+                <td width='100%'>
+                    <span class="player-hp">{HP}</span><br>
+                    <span class="player-mana">{MANA}</span><br>
+                    <span class="player-end">{ENDR}</span><br>
+                    <span class="player-ac">{AC}</span><br>
+                    <span class="player-atk">{ATK}</span>
+                </td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_STR}<br>{L_STA}<br>{L_AGI}<br>{L_DEX}</td> 
-                  <td width='100%'><font color='#00FF00'><span class="player-str">{STR}</span><br><span class="player-sta">{STA}</span><br><span class="player-agi">{AGI}</span><br><span class="player-dex">{DEX}</span></font></td>
+                  <td width='100%'><font color='#00FF00'>
+                      <span class="player-str">{STR}</span><br>
+                      <span class="player-sta">{STA}</span><br>
+                      <span class="player-agi">{AGI}</span><br>
+                      <span class="player-dex">{DEX}</span></font>
+                  </td>
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_WIS}<br>{L_INT}<br>{L_CHA}</td> 
-                  <td width='100%'><font color='#00FF00'><span class="player-wis">{WIS}</span><br><span class="player-int">{INT}</span><br><span class="player-cha">{CHA}</span></font></td> 
+                  <td width='100%'><font color='#00FF00'>
+                      <span class="player-wis">{WIS}</span><br>
+                      <span class="player-int">{INT}</span><br>
+                      <span class="player-cha">{CHA}</span></font>
+                  </td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}</td>
-                  <td><font color='#00FF00'><span class="player-pr">{POISON}</span><br><span class="player-mr">{MAGIC}</span><br><span class="player-dr">{DISEASE}</span><br><span class="player-fr">{FIRE}</span><br><span class="player-cr">{COLD}</span></font></td> 
+                  <td><font color='#00FF00'>
+                      <span class="player-pr">{POISON}</span><br>
+                      <span class="player-mr">{MAGIC}</span><br>
+                      <span class="player-dr">{DISEASE}</span><br>
+                      <span class="player-fr">{FIRE}</span><br>
+                      <span class="player-cr">{COLD}</span></font>
+                  </td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
