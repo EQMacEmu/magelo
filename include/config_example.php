@@ -14,10 +14,6 @@
  *                           Maudigan(Airwalking) 
  *
  ***************************************************************************/
- 
- 
- 
-
 
 if ( !defined('INCHARBROWSER') )
 {
@@ -39,6 +35,7 @@ $pass   =   "changeme";
 /*****************************************************
 **                  General Settings		    **
 *****************************************************/
+$adminIP      = '127.0.0.1';
 $numToDisplay = 50 ;//search results per page                 
 $highlightgm  = 1  ;//highlight GM inventories 0=off 1=on
 $blockbazaar  = 1  ;//disable bazaar 0=on 1=off     
@@ -223,7 +220,6 @@ $adscript = "";
 ******************************************************/
 
 // Non-configurable stuff
-mysql_connect($host, $user, $pass) or die("<center>The database host/user/password supplied were invalid.</center>");
-mysql_select_db("$db") or die("<center>Could not find designated database.</center>");
+$game_db    = new mysqli($host, $user, $pass, $db);
 
 ?>

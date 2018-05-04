@@ -29,23 +29,22 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  *      altered character profile initialization to remove redundant query
- ***************************************************************************/ 
-  
-  
-  
+ ***************************************************************************/
   
 define('INCHARBROWSER', true); 
-include_once("include/config.php"); 
+include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/profile.php"); 
 include_once("include/global.php"); 
 include_once("include/language.php"); 
-include_once("include/functions.php"); 
+include_once("include/functions.php");
 
+global $game_db;
 
 //if character name isnt provided post error message and exit 
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']); 
-else $charName = $_GET['char']; 
-
+else $charName = $_GET['char'];
 
 //character initializations - rewritten 9/28/2014
 $char = new profile($charName); //the profile class will sanitize the character name
@@ -54,8 +53,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission 
-if ($mypermission['flags']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']); 
-
+if ($mypermission['flags'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //============================= 
 //preload all quest globals 
@@ -63,12 +61,12 @@ if ($mypermission['flags']) message_die($language['MESSAGE_ERROR'],$language['ME
 $quest_globals = array(); 
 $query = "SELECT name, value FROM quest_globals WHERE charid = $charID;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query); 
-if (mysql_num_rows($results)) 
-    while($row = mysql_fetch_array($results)) 
-        $quest_globals[$row['name']] = $row['value']; 
-
-
+$results = $game_db->query($query);
+if (numRows($results)) {
+    foreach ($results AS $row) {
+        $quest_globals[$row['name']] = $row['value'];
+    }
+}
 
 //============================= 
 //preload all zone flags 
@@ -76,12 +74,12 @@ if (mysql_num_rows($results))
 $zone_flags = array(); 
 $query = "SELECT zoneID FROM zone_flags WHERE charID = $charID;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query); 
-if (mysql_num_rows($results)) 
-    while($row = mysql_fetch_array($results)) 
-        $zone_flags[] = $row['zoneID']; 
-
-
+$results = $game_db->query($query);
+if (numRows($results)) {
+    foreach ($results AS $row) {
+        $zone_flags[] = $row['zoneID'];
+    }
+}
 
 //============================= 
 //check quest globals for flag 
@@ -91,9 +89,7 @@ function getflag($condition, $flagname) {
     if (!array_key_exists($flagname,$quest_globals)) return 0; 
     if ($quest_globals[$flagname]<$condition) return 0; 
     return 1; 
-} 
-
-
+}
 
 //============================= 
 //check zone flags for access 
@@ -111,8 +107,7 @@ include("include/header.php");
 //build body template 
 $template->set_filenames(array( 
   'flags' => 'flags_body.tpl') 
-); 
-
+);
 
 $template->assign_vars(array(  
   'NAME' => $name, 
@@ -176,22 +171,6 @@ $template->assign_block_vars( "mainhead.main" , array( 'ID' => 11, 'FLAG' => $Ha
 
 if (getflag(1, "pop_time_maelin") && getflag(1, "pop_fire_fennin_projection") && getflag(1, "pop_wind_xegony_projection") && getflag(1, "pop_water_coirnav_projection") && getflag(1, "pop_eartha_arbitor_projection") && getflag(1, "pop_earthb_rathe")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 12, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTime']) ); 
-
-
-$template->assign_block_vars( "mainhead" , array( 'TEXT' => $language['FLAG_GoD']) ); 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 13, 'FLAG' => getflag(1,"god_vxed_access"), 'TEXT' => $language['FLAG_GoD_Vxed']) ); 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 14, 'FLAG' => getflag(1,"god_tipt_access"), 'TEXT' => $language['FLAG_GoD_Tipt']) ); 
-
-if (getzoneflag(293) && getflag(1, "god_vxed_access") && getflag(1, "god_tipt_access") && getflag(1, "god_kodtaz_access")) { $HasFlag = 1; } else { $HasFlag = 0; } 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 15, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_GoD_KT_1']) ); 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 16, 'FLAG' => getflag(12,"ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_R3']) ); 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 17, 'FLAG' => getflag(14,"ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_R4']) ); 
-
-if (getzoneflag(295) && getflag(1, "god_qvic_access")) { $HasFlag = 1; } else { $HasFlag = 0; } 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 18, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_GoD_Qvic_1']) ); 
-
-if (getzoneflag(297) && getflag(1, "god_txevu_access")) { $HasFlag = 1; } else { $HasFlag = 0; } 
-$template->assign_block_vars( "mainhead.main" , array( 'ID' => 19, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_GoD_Txevu_1']) ); 
 
 //PoN B 
 $template->assign_block_vars( "head" , array( 'ID' => 1, 'NAME' => $language['FLAG_PoP_PoNB']) ); 
@@ -308,59 +287,6 @@ $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_wi
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_water_coirnav_projection"), 'TEXT' => $language['FLAG_PoP_Coirnav']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_eartha_arbitor_projection"), 'TEXT' => $language['FLAG_PoP_Arbitor']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_earthb_rathe"), 'TEXT' => $language['FLAG_PoP_Rathe']) ); 
-//Vxed 
-$template->assign_block_vars( "head" , array( 'ID' => 13, 'NAME' => $language['FLAG_GoD_Vxed']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_vxed_access"), 'TEXT' => $language['FLAG_GoD_KT_2']) ); 
-//Sewer 1 
-if (getflag(1, "temp_sewers") || getflag(2, "sewers")) $template->assign_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_1_1']) ); 
-else $template->assign_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_1_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_1_2']) ); 
-//Sewer 2 
-if (getflag(2, "temp_sewers") || getflag(3, "sewers")) $template->assign_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_2_1']) ); 
-else $template->assign_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_2_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_2_2']) ); 
-//sewer 3 
-if (getflag(3, "temp_sewers") || getflag(4, "sewers")) $template->assign_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_3_1']) ); 
-else $template->assign_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_3_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_3_2']) ); 
-//sewer 4 
-if (getflag(4, "temp_sewers") || getflag(5, "sewers")) $template->assign_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_1']) ); 
-else $template->assign_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_4_1']) ); 
-if (getflag(1, "god_vxed_access") && getflag(5, "sewers")) $template->assign_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_2']) ); 
-else $template->assign_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_4_2']) ); 
-//Tipt 
-$template->assign_block_vars( "head" , array( 'ID' => 14, 'NAME' => $language['FLAG_GoD_Tipt']) ); 
-//2.22 3/19/2012 
-//$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_kodtaz_access"), 'TEXT' => $language['FLAG_GoD_KT_3']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_tipt_access"), 'TEXT' => $language['FLAG_GoD_KT_3']) ); 
-//KT 
-$template->assign_block_vars( "head" , array( 'ID' => 15, 'NAME' => $language['FLAG_GoD_KT_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_vxed_access"), 'TEXT' => $language['FLAG_GoD_KT_2']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_tipt_access"), 'TEXT' => $language['FLAG_GoD_KT_3']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_kodtaz_access"), 'TEXT' => $language['FLAG_GoD_KT_4']) ); 
-//Request Ikkinz Raids 1-3 
-$template->assign_block_vars( "head" , array( 'ID' => 16, 'NAME' => $language['FLAG_GoD_Ikky_R3']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_2']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_3']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_4']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(5, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_5']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(6, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_6']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(7, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_7']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(8, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_8']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(9, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_9']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(10, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_10']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(11, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_11']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(12, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_12']) ); 
-//request Ikkinz Raid 4 
-$template->assign_block_vars( "head" , array( 'ID' => 17, 'NAME' => $language['FLAG_GoD_Ikky_R4']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(13, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_13']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(14, "ikky"), 'TEXT' => $language['FLAG_GoD_Ikky_14']) ); 
-//Qvic 
-$template->assign_block_vars( "head" , array( 'ID' => 18, 'NAME' => $language['FLAG_GoD_Qvic_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_qvic_access"), 'TEXT' => $language['FLAG_GoD_Qvic_2']) ); 
-//Txevu 
-$template->assign_block_vars( "head" , array( 'ID' => 19, 'NAME' => $language['FLAG_GoD_Txevu_1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_txevu_access"), 'TEXT' => $language['FLAG_GoD_Txevu_2']) ); 
 
 $template->pparse('flags'); 
 
@@ -370,6 +296,5 @@ $template->destroy;
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
 include("include/footer.php"); 
-
 
 ?>

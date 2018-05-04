@@ -18,17 +18,19 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  ***************************************************************************/
- 
 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 include_once("include/global.php");
 
+global $game_db;
+
 function trymove($name, $login, $zone) {
-  global $language, $charmovezones;
+  global $language, $charmovezones, $game_db;
 
   if (!$login || !$zone || !$name) return $login." / ".$name." / ".$zone." - one or more fields was left blank";
   if (!preg_match("/^[a-zA-Z]*\z/", $name)) return $login." / ".$name." / ".$zone." - character name contains illegal characters";
@@ -40,13 +42,13 @@ function trymove($name, $login, $zone) {
   $template = "SELECT `long_name`, `short_name`, `zoneidnumber` FROM `zone` "
              ."WHERE LCASE(`short_name`)='%s' "
              ."LIMIT 1";
-  $query = sprintf($template ,mysql_real_escape_string(strtolower($zone)));
+  $query = sprintf($template ,sanitize($game_db, strtolower($zone)));
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-  $result = mysql_query($query);
+  $result = $game_db->query($query);
   
-  if (!mysql_num_rows($result))  return $login." / ".$name." / ".$zone." - zone database error";  
-  
-  $row = mysql_fetch_array($result);
+  if (!numRows($result))  return $login." / ".$name." / ".$zone." - zone database error";
+
+  $row = fetchRows($result);
   $zonesn = $row['short_name'];
   $zoneln = $row['long_name'];
   $zoneid = $row['zoneidnumber'];
@@ -59,16 +61,16 @@ function trymove($name, $login, $zone) {
              ."WHERE LCASE(`account`.`name`)='%s' "
              ." AND LCASE(`character_data`.`name`)='%s' "
              ."LIMIT 1";
-  $query = sprintf($template ,mysql_real_escape_string(strtolower($login)),mysql_real_escape_string(strtolower($name)));
+  $query = sprintf($template ,sanitize($game_db, strtolower($login)),sanitize($game_db, strtolower($name)));
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-  $result = mysql_query($query);
+  $result = $game_db->query($query);
   
-  if (!mysql_num_rows($result))  { 
+  if (!numRows($result))  {
     sleep(2);
     return $login." / ".$name." / ".$zone." - Login or character name was not correct";  
   }
   
-  $row = mysql_fetch_array($result);
+  $row = fetchRows($result);
   $charid = $row['id'];
   
   //move em
@@ -79,23 +81,20 @@ function trymove($name, $login, $zone) {
              ."   ,`y` = '%s' "
              ."   ,`z` = '%s' "
              ."WHERE `id`='%s' ";
-  $query = sprintf($template ,mysql_real_escape_string($zoneid)
-                             ,mysql_real_escape_string($charmovezones[$zone]['x'])
-                             ,mysql_real_escape_string($charmovezones[$zone]['y'])
-                             ,mysql_real_escape_string($charmovezones[$zone]['z'])
-                             ,mysql_real_escape_string($charid)
+  $query = sprintf($template ,sanitize($game_db, $zoneid)
+                             ,sanitize($game_db, $charmovezones[$zone]['x'])
+                             ,sanitize($game_db, $charmovezones[$zone]['y'])
+                             ,sanitize($game_db, $charmovezones[$zone]['z'])
+                             ,sanitize($game_db, $charid)
                              );
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-  $result = mysql_query($query);
-   
+  $result = $game_db->query($query);
   
   return $login." / ".$name." - moved to ".$zoneln;
 }
 
-
-
-//dont display bazaaar if blocked in config.php 
-if ($blockcharmove) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+//dont display mover if blocked in config.php
+if ($blockcharmove && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 $names = $_GET['name'];
 $zones = $_GET['zone'];
@@ -144,7 +143,6 @@ else {
 	  );
 	}
 }
-
 
 $template->pparse('mover');
 

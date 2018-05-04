@@ -17,15 +17,11 @@
  *      added code to monitor database performance
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 include_once("include/global.php");
-
 
 // keys match the permissions array in 
 // config.php for easy foreach looping
@@ -54,7 +50,6 @@ $l_users = array (
   'PUBLIC' 		=> $language['SETTINGS_USERS_PUBLIC'],
   'PRIVATE' 		=> $language['SETTINGS_USERS_PRIVATE'],
 );
-
 
 //drop page
 $d_title = " - ".$language['PAGE_TITLES_SETTINGS'];
@@ -89,17 +84,13 @@ foreach ($l_permission as $key => $value) {
      'VALUE' => ($permissions[$key2][$key]) ? "" : "x" )
     );    
   }
-  
 }
-
-
 
 $template->assign_vars(array(  
   'S_RESULTS' => $numToDisplay,
   'S_HIGHLIGHT_GM' => (($highlightgm)?$language['SETTINGS_ENABLED']:$language['SETTINGS_DISABLED']),
   'S_BAZAAR' => (($blockbazaar)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
   'S_CHARMOVE' => (($blockcharmove)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
-
 
   'L_RESULTS' => $language['SETTINGS_RESULTS'],
   'L_CHARMOVE' => $language['SETTINGS_CHARMOVE'],
@@ -112,7 +103,6 @@ $template->assign_vars(array(
 $template->pparse('settings');
 
 $template->destroy;
-
 
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');

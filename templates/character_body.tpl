@@ -13,7 +13,7 @@ function display(type, id, prefix) {
 </script> 
 <div class='NavOuter'> 
 <div class='NavInner'> 
-  <div class='FreeButton' style="color:606060;margin:3px">{L_INVENTORY}</div> 
+  <div class='FreeButton' style="color:#606060;margin:3px">{L_INVENTORY}</div>
   <div class='FreeButton' onclick="window.location='aas.php?char={FIRST_NAME}';" style="margin:3px">{L_AAS}</div> 
   <div class='FreeButton' onclick="window.location='keys.php?char={FIRST_NAME}';" style="margin:3px">{L_KEYS}</div>
   <div class='FreeButton' onclick="window.location='flags.php?char={FIRST_NAME}';" style="margin:3px">{L_FLAGS}</div> 

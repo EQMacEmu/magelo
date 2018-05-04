@@ -18,32 +18,27 @@
  *
  ***************************************************************************/
  
- 
- 
- 
-if ( !defined('INCHARBROWSER') )
-{
-	die("Hacking attempt");
-}
+if (!defined('INCHARBROWSER')) { die("Hacking attempt"); }
 
 include_once("language.php");
 include_once("config.php");
+include_once("debug.php");
+include_once("sql.php");
 
+global $game_db;
 
 //holds timers and log texts - added 9/28/2014
 $dbp_time_start = array();
 $dbp_output_buffer = array();
 
 //starts an indexed timer - added 9/28/2014
-function dbp_mark_time($index)
-{ 
+function dbp_mark_time($index) {
    global $dbp_time_start;
    $dbp_time_start[$index] = microtime();
 } 
 
 //returns a string describing how long an indexed timer has been running - added 9/28/2014
-function dbp_check_time($index)
-{
+function dbp_check_time($index) {
    global $dbp_time_start;
    list($old_usec, $old_sec) = explode(' ',$dbp_time_start[$index]);
    list($new_usec, $new_sec) = explode(' ',microtime());
@@ -54,20 +49,22 @@ function dbp_check_time($index)
 }
 
 //gathers performance data on a query - added 9/28/2014
-function dbp_query_stat($index, $query){
+function dbp_query_stat($index, $query) {
+	global $game_db;
    //start the timer
    dbp_mark_time($index);
    
    //execute the query
-   mysql_query($query);
+	$game_db->query($query);
    
    //stop the timer
    $time = dbp_check_time($index);
    
    //get an explanation of the query
-   $result = mysql_query("EXPLAIN ".$query);
+	//$result = $game_db->query("EXPLAIN ".$query);
+	$result = $game_db->query($query);
    $explain_rows = '';
-   while($row = mysql_fetch_array($result)){
+	foreach($result AS $row) {
       $explain_rows .= 
       "            <tr>\n".
       "               <td>".$row['select_type']."</td>\n".
@@ -112,38 +109,34 @@ function dbp_query_stat($index, $query){
 }
 
 //appends text onto the log that gets output later - added 9/28/2014
-function dbp_append_buffer($index,$text){
+function dbp_append_buffer($index,$text) {
    global $dbp_output_buffer;
    $dbp_output_buffer[$index] .= $text;
 }
 
 //clears the output buffer - added 9/28/2014
-function dbp_clear_buffer($index){
+function dbp_clear_buffer($index) {
    global $dbp_output_buffer;
    $dbp_output_buffer[$index] = "";
 }
 
 //returns the output buffer - added 9/28/2014
-function dbp_dump_buffer($index){
+function dbp_dump_buffer($index) {
    global $dbp_output_buffer;
    return "<div class='db_dump'>\n".$dbp_output_buffer[$index]."</div>\n";
 }
 
-
-
 function GetPermissions($gm, $anonlevel, $char_id) {
-	global $permissions;
+	global $permissions, $game_db;
          
    $query = "SELECT value FROM quest_globals WHERE charid = $char_id and name = 'charbrowser_profile';";
    if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-   $results = mysql_query($query); 
-   if (mysql_num_rows($results)) 
-   {
-            $row = mysql_fetch_array($results);
-            if ($row['value'] == 1) return $permissions['PUBLIC'];
-            if ($row['value'] == 2) return $permissions['PRIVATE'];
+	$results = $game_db->query($query);
+	if (numRows($results)) {
+		$row = fetchRows($results);
+	   if ($row[0]['value'] == 1) return $permissions['PUBLIC'];
+	   if ($row[0]['value'] == 2) return $permissions['PRIVATE'];
    }
-
 	if ($gm) return $permissions['GM'];
 	if ($anonlevel == 2)  return $permissions['ROLEPLAY'];
 	if ($anonlevel == 1)  return $permissions['ANON'];
@@ -151,8 +144,7 @@ function GetPermissions($gm, $anonlevel, $char_id) {
 }
 
 function message_die($dietitle, $text) {
-	global $language;
-	global $template;
+	global $language, $template;
 	
 	//drop page
 	$d_title = " - ".$dietitle;
@@ -187,131 +179,77 @@ function message($title, $text) {
 	  'TEXT' => $text,
 	  'L_BACK' => $language['BUTTON_BACK'])
 	);
-	
 	$template->pparse('message');
-	
 }
 
-
-function generate_pagination($base_url, $num_items, $per_page, $start_item, $add_prevnext_text = TRUE)
-{
+function generate_pagination($base_url, $num_items, $per_page, $start_item, $add_prevnext_text = TRUE) {
 	global $language;
-
 	$total_pages = ceil($num_items/$per_page);
-
-	if ( $total_pages == 1 )
-	{
-		return '';
-	}
-
+	if ($total_pages == 1) { return ''; }
 	$on_page = floor($start_item / $per_page) + 1;
-
 	$page_string = '';
-	if ( $total_pages > 10 )
-	{
+	if ($total_pages > 10) {
 		$init_page_max = ( $total_pages > 3 ) ? 3 : $total_pages;
 
-		for($i = 1; $i < $init_page_max + 1; $i++)
-		{
+		for($i=1;$i<$init_page_max+1;$i++) {
 			$page_string .= ( $i == $on_page ) ? '<b>' . $i . '</b>' : '<a href="' . ($base_url . "&amp;start=" . ( ( $i - 1 ) * $per_page ) ) . '">' . $i . '</a>';
-			if ( $i <  $init_page_max )
-			{
+			if ($i <  $init_page_max)	{
 				$page_string .= ", ";
 			}
 		}
 
-		if ( $total_pages > 3 )
-		{
-			if ( $on_page > 1  && $on_page < $total_pages )
-			{
-				$page_string .= ( $on_page > 5 ) ? ' ... ' : ', ';
+		if ($total_pages > 3) {
+			if ($on_page > 1  && $on_page < $total_pages) {
+				$page_string .= ($on_page > 5) ? ' ... ' : ', ';
 
-				$init_page_min = ( $on_page > 4 ) ? $on_page : 5;
-				$init_page_max = ( $on_page < $total_pages - 4 ) ? $on_page : $total_pages - 4;
+				$init_page_min = ($on_page > 4) ? $on_page : 5;
+				$init_page_max = ($on_page < $total_pages - 4) ? $on_page : $total_pages - 4;
 
-				for($i = $init_page_min - 1; $i < $init_page_max + 2; $i++)
-				{
+				for($i=$init_page_min-1;$i<$init_page_max+2;$i++) {
 					$page_string .= ($i == $on_page) ? '<b>' . $i . '</b>' : '<a href="' . ($base_url . "&amp;start=" . ( ( $i - 1 ) * $per_page ) ) . '">' . $i . '</a>';
-					if ( $i <  $init_page_max + 1 )
-					{
-						$page_string .= ', ';
-					}
+					if ($i <  $init_page_max + 1) { $page_string .= ', '; }
 				}
-
 				$page_string .= ( $on_page < $total_pages - 4 ) ? ' ... ' : ', ';
 			}
-			else
-			{
-				$page_string .= ' ... ';
-			}
+			else { $page_string .= ' ... '; }
 
-			for($i = $total_pages - 2; $i < $total_pages + 1; $i++)
-			{
+			for($i=$total_pages-2;$i<$total_pages+1;$i++) {
 				$page_string .= ( $i == $on_page ) ? '<b>' . $i . '</b>'  : '<a href="' . ($base_url . "&amp;start=" . ( ( $i - 1 ) * $per_page ) ) . '">' . $i . '</a>';
-				if( $i <  $total_pages )
-				{
-					$page_string .= ", ";
-				}
+				if($i < $total_pages) { $page_string .= ", "; }
 			}
 		}
 	}
-	else
-	{
-		for($i = 1; $i < $total_pages + 1; $i++)
-		{
+	else {
+		for($i=1;$i<$total_pages+1;$i++) {
 			$page_string .= ( $i == $on_page ) ? '<b>' . $i . '</b>' : '<a href="' . ($base_url . "&amp;start=" . ( ( $i - 1 ) * $per_page ) ) . '">' . $i . '</a>';
-			if ( $i <  $total_pages )
-			{
-				$page_string .= ', ';
-			}
+			if ($i <  $total_pages) { $page_string .= ', '; }
 		}
 	}
 
-	if ( $add_prevnext_text )
-	{
-		if ( $on_page > 1 )
-		{
+	if ($add_prevnext_text)	{
+		if ($on_page > 1) {
 			$page_string = ' <a href="' . ($base_url . "&amp;start=" . ( ( $on_page - 2 ) * $per_page ) ) . '">' . $language['SEARCH_PREVIOUS'] . '</a>&nbsp;&nbsp;' . $page_string;
 		}
 
-		if ( $on_page < $total_pages )
-		{
+		if ($on_page < $total_pages) {
 			$page_string .= '&nbsp;&nbsp;<a href="' . ($base_url . "&amp;start=" . ( $on_page * $per_page ) ) . '">' . $language['SEARCH_NEXT'] . '</a>';
 		}
-
 	}
-
 	$page_string = $lang['Goto_page'] . ' ' . $page_string;
-
 	return $page_string;
-	
 }
 
-function IsAlphaSpace($str)
-{
+function IsAlphaSpace($str) {
    $old = Array("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ");
    $new = Array("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-   if (str_replace($old, $new, $str) == "")
-   {
-      return (true);
-   }
-   else
-   {
-      return (false);
-   }
+   if (str_replace($old, $new, $str) == "") { return (true); }
+   else { return (false); }
 }
 
-function IsAlphaNumericSpace($str)
-{
+function IsAlphaNumericSpace($str) {
    $old = Array(" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
    $new = Array("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-   if (str_replace($old, $new, $str) == "")
-   {
-      return (true);
-   }
-   else
-   {
-      return (false);
-   }
+   if (str_replace($old, $new, $str) == "") { return (true); }
+   else { return (false); }
 }
 ?>

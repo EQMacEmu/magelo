@@ -21,11 +21,10 @@
  *      altered character profile initialization to remove redundant query
  ***************************************************************************/
 
-
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
@@ -34,14 +33,13 @@ include_once("include/itemclass.php");
 include_once("include/statsclass.php");
 include_once("include/calculatestats.php");
 
+global $game_db;
+
 //exit now and post message if server doesnt have GD installed
 if (!SERVER_HAS_GD) {
   print $language['MESSAGE_NO_GD'];
   exit();
 }
-
-
-
 
 //paths where files are saved
 $path = array(
@@ -71,7 +69,6 @@ function HexToRGB($hex) {
 	} 		
 	return $color;	
 }
-
 
 //get our starting values from _GET or presets
 // several parameters are '-' delimited since mod_rewrite can only handle 9 parameters
@@ -108,7 +105,6 @@ $screen 	= ($getbackground[2]) ? sprintf($path['SCREEN'], $getbackground[2]) : f
 
 $border 	= ($_GET['border']) ? sprintf($path['BORDER'], $_GET['border']) : false;
 
-
 //starting points of text
 $line_start_x = 15;
 $line_start_y = 12;
@@ -132,8 +128,6 @@ $epic_icon_width_height = 40;
 $signaturewidth = 500;
 $signatureheight = 100;
 
-
-
 //used for outputting errors since any text output will cause broken image links
 //should be similar to message_die in functions.php
 function png_message_die($error, $message) {
@@ -147,11 +141,9 @@ function png_message_die($error, $message) {
 	ImageDestroy($error_image);
 }
 
-
 //if character name isnt provided post error message and exit
 if(!$_GET['char']) png_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
-
 
 //character initializations - rewritten 9/28/2014
 $char = new profile($charName); //the profile class will sanitize the character name
@@ -159,8 +151,7 @@ $charID = $char->char_id();
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['signatures']) png_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
+if ($mypermission['signatures'] && !isAdmin()) png_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //load profile information for the character
 $name 		= $char->GetValue('name');
@@ -189,6 +180,8 @@ $bsp 		= $char->GetValue('silver_bank');
 $bcp 		= $char->GetValue('copper_bank'); 
 
 //load guild name
+$guild_name = '';
+$guild_rank = '';
 //rewritten because the guild id was removed from the profile 9/26/2014
 $query = "SELECT guilds.name, guild_members.rank 
           FROM guilds
@@ -196,42 +189,39 @@ $query = "SELECT guilds.name, guild_members.rank
           ON guilds.id = guild_members.guild_id
           WHERE guild_members.char_id = $charID LIMIT 1";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-if(mysql_num_rows($results) != 0)
-{ 
-   $row = mysql_fetch_array($results);
-   $guild_name = $row['name'];
-   $guild_rank = $guildranks[$row['rank']];
+$results = $game_db->query($query);
+if(numRows($results) != 0)
+{
+   $row = fetchRows($results);
+   $guild_name = $row[0]['name'];
+   $guild_rank = $guildranks[$row[0]['rank']];
 }
-
 
 //place where all the items stats are added up
 $itemstats = new stats();
 
-																																						
 // pull characters inventory slotid is loaded as
 // "myslot" since items table also has a slotid field.
 $query = "SELECT items.*, character_inventory.augslot1, character_inventory.augslot2, character_inventory.augslot3, character_inventory.augslot4, character_inventory.augslot5, character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-while ($row = mysql_fetch_array($results)) {
+$results = $game_db->query($query);
+foreach($results AS $row) {
   $tempitem = new item($row);
   for ($i = 1; $i <= 5; $i++) {
     if ($row["augslot".$i]) {
       $query = "SELECT * from items where id = ".$row["augslot".$i]." LIMIT 1";
       if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-      $augresults = mysql_query($query);
-      $augrow = mysql_fetch_array($augresults);
+      $augresults = $game_db->query($query);
+      $augrow = fetchRows($augresults);
       $itemstats->additem($augrow);
     }
   }
 
   if ($tempitem->type() == EQUIPMENT)
     $itemstats->additem($row);
-  
 }
 
-;
+$epicicon = '';
 if ($epicbg) {
    $query = "SELECT items.icon, items.id FROM items 
              JOIN titles ON items.id = titles.item_id
@@ -241,11 +231,9 @@ if ($epicbg) {
              ORDER BY items.id DESC
              LIMIT 0, 1;";
    if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-    $results = mysql_query($query);
-    if ($row = mysql_fetch_array($results)) $epicicon = sprintf($path['EPIC'], $row['icon']);
+    $results = $game_db->query($query);
+    if ($row = fetchRows($results)) $epicicon = sprintf($path['EPIC'], $row[0]['icon']);
 }
-
-
 
 $chardata = array(
   'FIRST_NAME' => $name,
@@ -284,8 +272,6 @@ $stats = array(
   'WT' => round($itemstats->WT()/10)
 );
 
-
-
 /**************************************************
 **  DO NOT USE png_message_die past this point   **
 **************************************************/
@@ -310,7 +296,6 @@ if ($screen) {
 	imagecopy($image, $tempimage, 0, 0, 0, 0, $signaturewidth, $signatureheight);
 	imagedestroy($tempimage);
 }
-
 
 //drop epic on if an icon was set earlier
 if($epicbg && $epicicon) {
@@ -348,12 +333,10 @@ function drawtext( $image, $text, $size, $font, $color, $offsetx, $offsety, $sha
 	return array( 'HEIGHT' => $height, 'WIDTH' => $width );
 }
 
-
 //draw line one
 $ttftext = $chardata['FIRST_NAME']." ".$chardata['LAST_NAME'];
 $ttfreturn = drawtext( $image, $ttftext, $sizeone, $fontone, $colorone, $line_start_x, $line_start_y, $shadowone);
 $line_start_y += $ttfreturn['HEIGHT'];
-
 
 //draw line two
 $ttftext = $chardata['LEVEL']." ".$chardata['RACE']." ".$chardata['CLASS'];
@@ -393,6 +376,5 @@ if ($border) {
 header("Content-Type: image/png"); 
 imagepng($image); 
 ImageDestroy($image);
-
 
 ?> 

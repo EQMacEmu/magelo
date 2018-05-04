@@ -26,24 +26,20 @@
  *      added new aa tabs
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/profile.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 
-
-
-
+global $game_db;
 
 //if character name isnt provided post error message and exit
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
- 
 
 //character initializations - rewritten 9/28/2014
 $char = new profile($charName); //the profile class will sanitize the character name
@@ -52,9 +48,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['AAs']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
-
+if ($mypermission['AAs'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 $classbit = array(0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,1);
 //rewritten to replace character blob - 9/929/3014
@@ -65,7 +59,6 @@ foreach($temp as $key => $value)
 {
    $aa_array[$value["aa_id"]] = $value["aa_value"];
 }
-
 
 $aatabs = array();
 $aatabs[1] = $language['AAS_TAB_1'];
@@ -78,7 +71,6 @@ $aatabs[7] = $language['AAS_TAB_7'];
 $aatabs[8] = $language['AAS_TAB_8']; //added 9/29/2014
 $aatabs[10] = $language['AAS_TAB_10']; //added 9/29.2014
 
-
 //drop page
 $d_title = " - ".$name.$language['PAGE_TITLES_AAS'];
 include("include/header.php");
@@ -87,7 +79,6 @@ include("include/header.php");
 $template->set_filenames(array(
   'aas' => 'aas_body.tpl')
 );
-
 
 $Color = "7b714a";
 foreach ($aatabs as $key => $value) {
@@ -98,7 +89,6 @@ foreach ($aatabs as $key => $value) {
   );
   $Color = "FFFFFF";
 }
-
 
 $SpentAA = 0;
 $Display = "block";
@@ -112,8 +102,8 @@ foreach ($aatabs as $key => $value) {
   // pull the classes AA's from the DB
   $query = "SELECT skill_id, name, cost, cost_inc, max_level FROM altadv_vars WHERE type = ".$key." AND (classes+berserker) & ".$classbit[$char->GetValue('class')]." ORDER BY skill_id";
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-  $results = mysql_query($query);
-  while ($row = mysql_fetch_array($results)) {
+  $results = $game_db->query($query);
+  foreach($results AS $row) {
     //calculate cost
     for($i = 1 ; $i <= $aa_array[$row['skill_id']] ; $i++) {
       $SpentAA += $row['cost'] + ($row['cost_inc'] * ($i - 1));
@@ -126,7 +116,6 @@ foreach ($aatabs as $key => $value) {
     );
   }
 }
-
 
 $template->assign_vars(array(  
   'NAME' => $name,
@@ -151,15 +140,12 @@ $template->assign_vars(array(
   'L_DONE' => $language['BUTTON_DONE'])
 );
 
-
 $template->pparse('aas');
 $template->destroy;
 
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
-
 include("include/footer.php");
-
 
 ?>

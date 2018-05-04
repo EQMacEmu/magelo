@@ -21,16 +21,16 @@
  *      altered character profile initialization to remove redundant query
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/profile.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 
+global $game_db;
 
 //if character name isnt provided post error message and exit
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
@@ -43,16 +43,14 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['corpses']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
-
-
+if ($mypermission['corpses'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 // pull the characters corpses from the DB
-$query = "SELECT zone.short_name, zone.zoneidnumber, character_corpses.isburried, character_corpses.x, character_corpses.y, character_corpses.rezzed, character_corpses.timeofdeath FROM zone, character_corpses WHERE character_corpses.charid = ".$charID." AND zone.zoneidnumber = character_corpses.zoneid ORDER BY character_corpses.timeofdeath DESC;";
+$query = "SELECT zone.short_name, zone.id, character_corpses.is_buried, character_corpses.x, character_corpses.y, character_corpses.is_rezzed, character_corpses.time_of_death FROM zone, character_corpses WHERE character_corpses.charid = ".$charID." AND zone.id = character_corpses.zone_id ORDER BY character_corpses.time_of_death DESC;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-if (!mysql_num_rows($results)) message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
+
+$results = $game_db->query($query);
+if (!numRows($results)) message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
 
 //drop page
 $d_title = " - ".$name.$language['PAGE_TITLES_CORPSE'];
@@ -84,7 +82,7 @@ $template->assign_vars(array(
 );
 
 //dump corpses
-while ($row = mysql_fetch_array($results)) {
+foreach($results AS $row) {
     $template->assign_block_vars("corpses", array( 
       'REZZED' => ((!$row['rezzed']) ? "0":"1"),	   
       'TOD' => $row['timeofdeath'],
@@ -100,12 +98,9 @@ $template->pparse('corpse');
 
 $template->destroy;
 
-
-
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
 include("include/footer.php");
-
 
 ?>

@@ -19,16 +19,16 @@
  *      added code to monitor database performance
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 include_once("include/itemclass.php");
 
+global $game_db;
 				
 //load variables from the GET				
 $start 		= (($_GET['start'])		? $_GET['start'] 	: "0");
@@ -44,11 +44,8 @@ $direction	= (($_GET['direction']=="DESC")	? "DESC" 		: "ASC");
 
 $perpage=25;
 
-
 //build baselink
 $baselink="bazaar.php?class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
-
-
 
 //security against sql injection  
 if (!IsAlphaSpace($item)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
@@ -62,22 +59,10 @@ if (!is_numeric($slot)) message_die($language['MESSAGE_ERROR'],$language['MESSAG
 if (!is_numeric($type)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_TYPE_NUMERIC']);
 
 //dont display bazaaar if blocked in config.php 
-if ($blockbazaar) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
-
-
-
-
+if ($blockbazaar && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 // pull the items from the database
 //updated character table name 9/26/2014
-$select = "SELECT character_data.name as charactername, items.*, trader.item_cost as tradercost
-	   FROM character_data 
-	   INNER JOIN trader
-	   ON character_data.id = trader.char_id
-	   INNER JOIN items
-	   ON items.id = trader.item_id ";
-
 $where = "";
 $divider = " WHERE ";
 if ($item) {
@@ -111,18 +96,24 @@ if($slot > -1) {
   $divider = " AND "; 
 }
 
-
+$select = "SELECT character_data.name as charactername, items.*, trader.item_cost as tradercost
+	   FROM character_data
+	   INNER JOIN trader
+	   ON character_data.id = trader.char_id
+	   INNER JOIN items
+	   ON items.id = trader.item_id ";
 
 $query = $select.$where;
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-$totalitems = mysql_num_rows($results);
-if (!$totalitems) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
+$results = $game_db->query($query);
+$totalitems = numRows($results);
+
+if (!$totalitems) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
 $query = $select.$where." ORDER BY $orderby $direction LIMIT $start, $perpage;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
+$results = $game_db->query($query);
 
 //drop page
 $d_title = " - ".$language['PAGE_TITLES_BAZAAR'];
@@ -156,7 +147,7 @@ $template->assign_vars(array(
 
 //dump items
 $slotcounter = 0;
-while ($row = mysql_fetch_array($results)) {
+foreach($results AS $row) {
     $tempitem = new item($row);
     	$price = $row["tradercost"];
 	$plat = floor($price/1000);
@@ -175,7 +166,6 @@ while ($row = mysql_fetch_array($results)) {
     );
     $slotcounter ++;
 }
-
 
 //built combo box options
 foreach ($language['BAZAAR_ARRAY_SEARCH_TYPE'] as $key => $value ) {
@@ -211,12 +201,9 @@ $template->pparse('bazaar');
 
 $template->destroy;
 
-
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
-
 include("include/footer.php");
-
 
 ?>

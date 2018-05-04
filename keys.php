@@ -19,22 +19,22 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  *      altered character profile initialization to remove redundant query
- ***************************************************************************/ 
-  
-  
-  
+ ***************************************************************************/
   
 define('INCHARBROWSER', true); 
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/profile.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 
+global $game_db;
+
 //if character name isnt provided post error message and exit 
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']); 
-else $charName = $_GET['char']; 
-
+else $charName = $_GET['char'];
 
 //character initializations - rewritten 9/28/2014
 $char = new profile($charName); //the profile class will sanitize the character name
@@ -43,15 +43,15 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission 
-if ($mypermission['keys']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']); 
+if ($mypermission['keys'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //============================= 
 //grab the keys the user has
 //============================= 
 $query = "SELECT k.item_id, i.Name AS 'key' FROM keyring AS k LEFT JOIN items AS i ON i.id = k.item_id WHERE char_id =  $charID ORDER BY i.Name;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-if (!mysql_num_rows($results)) message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
+$results = $game_db->query($query);
+if (!numRows($results)) message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
 
 //drop page 
 $d_title = " - ".$name.$language['PAGE_TITLES_KEYS']; 
@@ -78,24 +78,20 @@ $template->assign_vars(array(
   'L_DONE' => $language['BUTTON_DONE'])
 );
 
-
-while ($row = mysql_fetch_array($results)) {
+foreach($results AS $row) {
     $template->assign_block_vars("keys", array( 
       'KEY' => $row['key'],
       'ITEM_ID' => $row["item_id"])
     );
 }
 
-
 $template->pparse('keys');
 
 $template->destroy;
 
-
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
-include("include/footer.php"); 
-
+include("include/footer.php");
 
 ?>

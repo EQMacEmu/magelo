@@ -5,11 +5,11 @@
   <img src="images/logo-518x128.png" width="80%">
   <div style='text-align:left;display:table-cell;font-family:arial;color:#000000;font-size:8pt;width:400px;'>
     <center>
-      Character Browser
+      TAKP Character Browser
       <br>
-      Based on {L_VERSION}: {VERSION}
+      Based on {L_VERSION}: {VERSION} {L_BY}: Maudigan
     <br>
-    {L_BY}: Maudigan
+     Rewritten for TAKP {L_BY}: Speedz
     </center>
     <br>
     <br>

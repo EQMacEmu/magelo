@@ -16,10 +16,7 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  ***************************************************************************/
- 
- 
- 
- 
+
 define('INCHARBROWSER', true);
 include_once("include/config.php");
 include_once("include/language.php");

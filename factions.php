@@ -24,15 +24,16 @@
  *      altered character profile initialization to remove redundant query
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/profile.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
+
+global $game_db;
 
 //if character name isnt provided post error message and exit
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
@@ -44,10 +45,8 @@ $charID = $char->char_id();
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
-
 //block view if user level doesnt have permission
-if ($mypermission['factions']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
+if ($mypermission['factions'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //converts faction values into a the string from the language file.
 function FactionToString($character_value) {
@@ -64,34 +63,37 @@ function FactionToString($character_value) {
 	return $language['FACTION_INDIFF'];
 }
 
-
 //gather all the data from the database first
-$query = "SELECT fl.id,                                 ".
-         "       fl.name,                               ".
-         "       IFNULL(fl.base, 0) AS base,            ".
-         "       IFNULL(flmc.mod, 0) AS classmod,       ".
-         "       IFNULL(flmr.mod, 0) AS racemod,        ".
-         "       IFNULL(flmd.mod, 0) AS deitymod,       ".
-         "       IFNULL(fv.current_value, 0) AS charmod ".
-         "FROM faction_list AS fl                       ".
-         "LEFT JOIN faction_list_mod AS flmc            ".
-         "       ON fl.id = flmc.faction_id             ".
-         "      AND (flmc.mod_name = 'c%d')             ".
-         "LEFT JOIN faction_list_mod AS flmr            ".
-         "       ON fl.id = flmr.faction_id             ".
-         "      AND (flmr.mod_name = 'r%d')             ".
-         "LEFT JOIN faction_list_mod AS flmd            ".
-         "       ON fl.id = flmd.faction_id             ".
-         "      AND (flmd.mod_name = 'd%d')             ".
-         "LEFT JOIN faction_values AS fv                ".
-         "       ON fl.id = fv.faction_id               ".
-         "      AND (fv.char_id = %d)                   ".
-         "ORDER BY name ASC;                            ";
+$query = "SELECT
+			fl.id, fl.name,
+			IFNULL(fl.base, 0)
+		  AS
+		  	base,
+		  	IFNULL(flmc.mod, 0)
+		  AS
+		  	classmod,
+		  	IFNULL(flmr.mod, 0)
+		  AS
+		  	racemod,
+		  	IFNULL(flmd.mod, 0)
+		  AS
+		  	deitymod,
+		  	IFNULL(fv.current_value, 0)
+		  AS
+		  	charmod
+		  FROM
+		  	faction_list
+		  AS
+		  	fl
+		  LEFT JOIN faction_list_mod AS flmc ON fl.id = flmc.faction_id AND (flmc.mod_name = 'c%d')
+		  LEFT JOIN faction_list_mod AS flmr ON fl.id = flmr.faction_id AND (flmr.mod_name = 'r%d')
+		  LEFT JOIN faction_list_mod AS flmd ON fl.id = flmd.faction_id AND (flmd.mod_name = 'd%d')
+		  LEFT JOIN character_faction_values AS fv ON fl.id = fv.faction_id AND (fv.id = ".$charID.")
+		  ORDER BY name ASC;";
 
 $query = sprintf($query, $char->GetValue('class'), $char->GetValue('race'), ($char->GetValue('deity')==396) ? "140" : $char->GetValue('deity'), $charID);
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$factions = mysql_query($query);
-
+$factions = $game_db->query($query);
 
 //drop page header
 $d_title = " - ".$name.$language['PAGE_TITLES_FACTIONS'];
@@ -133,8 +135,8 @@ $template->assign_vars(array(
 	'L_DONE'      => $language['BUTTON_DONE'])
 );
   
-if (mysql_num_rows($factions)) {
-	while ($faction = mysql_fetch_array($factions)) {
+if (numRows($factions)) {
+	foreach($factions AS $faction) {
 		$total = $faction['base'] + $faction['charmod'] + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
 		$template->assign_block_vars("factions", array( 
 			'ID'      => $faction['id'],

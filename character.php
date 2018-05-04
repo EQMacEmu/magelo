@@ -23,11 +23,10 @@
  *      altered character profile initialization to remove redundant query
  ***************************************************************************/
  
- 
- 
- 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 include_once("include/global.php");
 include_once("include/language.php");
 include_once("include/functions.php");
@@ -36,11 +35,11 @@ include_once("include/itemclass.php");
 include_once("include/statsclass.php");
 include_once("include/calculatestats.php");
 
+global $game_db;
 																							
 //if character name isnt provided post error message and exit
 if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
-    
 
 //character initializations - rewritten 9/28/2014
 $char = new profile($charName); //the profile class will sanitize the character name
@@ -48,8 +47,7 @@ $charID = $char->char_id();
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['inventory']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
-
+if ($mypermission['inventory'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //load profile information for the character
 $name 		= $char->GetValue('name');
@@ -85,12 +83,13 @@ $query = "SELECT guilds.name, guild_members.rank
           ON guilds.id = guild_members.guild_id
           WHERE guild_members.char_id = $charID LIMIT 1";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
-if(mysql_num_rows($results) != 0)
-{ 
-   $row = mysql_fetch_array($results);
-   $guild_name = $row['name'];
-   $guild_rank = $guildranks[$row['rank']];
+$results = $game_db->query($query);
+
+if(numRows($results) != 0)
+{
+  $row = fetchRows($results);
+  $guild_name = $row[0]['name'];
+  $guild_rank = $guildranks[$row[0]['rank']];
 }
 
 // place where all the items stats are added up
@@ -103,27 +102,24 @@ $allitems = array();
 // "myslot" since items table also has a slotid field.
 $query = "SELECT items.*, character_inventory.slotid AS myslot from items, character_inventory where character_inventory.id = '$charID' AND  items.id = character_inventory.itemid";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
-$results = mysql_query($query);
+$results = $game_db->query($query);
 // loop through inventory results saving Name, Icon, and preload HTML for each
 // item to be pasted into its respective div later
-while ($row = mysql_fetch_array($results)) {
+foreach($results AS $row) {
   $tempitem = new item($row);
 
   if ($tempitem->type() == EQUIPMENT)
     $itemstats->additem($row);
-  
+
   if ($tempitem->type() == EQUIPMENT || $tempitem->type() == INVENTORY)
     $itemstats->addWT($row['weight']);
-  
+
   $allitems[$tempitem->slot()] = $tempitem;
 }
-
-
 
 //drop page
 $d_title = " - ".$name.$language['PAGE_TITLES_CHARACTER'];
 include("include/header.php");
-
 
 //build body template
 $template->set_filenames(array(
@@ -209,8 +205,6 @@ $template->assign_vars(array(
   'L_DONE' => $language['BUTTON_DONE'])
 );
 
-
-
 //dump inventory items ICONS
 foreach ($allitems as $value) {
   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
@@ -221,8 +215,6 @@ foreach ($allitems as $value) {
       'ISBAG' => (($value->slotcount() > 0) ? "true":"false"))
     );
 }
-
-
 
 //dump bags windows
 foreach ($allitems as $value) {
@@ -276,18 +268,13 @@ foreach ($allitems as $value) {
     );
 }
 
-
-
 $template->pparse('character');
 
 $template->destroy;
 
-
 //added to monitor database performance 9/28/2014
 if (defined('DB_PERFORMANCE')) print dbp_dump_buffer('query');
 
-
 include("include/footer.php");
-
 
 ?>
