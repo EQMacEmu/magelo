@@ -159,6 +159,7 @@ function GetItem($item) {
 	//return buffer, build item here
 	$Output = "";
 	$tab = "           ";
+	$spellurl = 'https://www.takproject.net/takp-allaclone/spell.php?id=';
 
 	// LORE AUGMENT NODROP NORENT MAGIC
 	$spaceswitch= "";
@@ -248,7 +249,7 @@ function GetItem($item) {
 
 	//item proc
 	if (($item["proceffect"]>0) AND ($item["proceffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["proceffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["proceffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
 		$Output .= "&nbsp;(Combat)";
 		$Output .= " <i>(Level ".$item["proclevel2"].")</i>";
 		$Output .= "<br>\n";
@@ -256,7 +257,7 @@ function GetItem($item) {
 
 	// worn effect
 	if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["worneffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["worneffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
 		$Output .= "&nbsp;(Worn)";
 		$Output .= " <i>(Level ".$item["wornlevel"].")</i>";
 		$Output .= "<br>\n";
@@ -264,14 +265,14 @@ function GetItem($item) {
 
 	// focus effect
 	if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
-		$Output .= $tab."Focus: <a href='http://mqemulator.net/spell.php?id=".$item["focuseffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
+		$Output .= $tab."Focus: <a href='".$spellurl.$item["focuseffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
 		if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
 		$Output .= "<br>\n";
 	}
 
 	// clicky effect
 	if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["clickeffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["clickeffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
 		$Output .= "&nbsp;(";
 		if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
 		if ($item["clicktype"]==4) { $Output .= "Must Equip, ";	}
@@ -402,7 +403,7 @@ function GetItem($item) {
 
 	// scroll
 	if (($item["scrolleffect"]>0) AND ($item["scrolleffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["scrolleffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["scrolleffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
 		$Output .= "<br>\n";
 	}
 	return $Output;
