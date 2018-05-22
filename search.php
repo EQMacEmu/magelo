@@ -67,7 +67,8 @@ if ($guild) {
 $query = $select.$where;
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
 $results = $game_db->query($query);
-if (!numRows($results)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
+$totalchars = numRows($results);
+if (!$totalchars) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
 
 $query = $select.$where."ORDER BY $orderby $direction LIMIT $start, $numToDisplay;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
