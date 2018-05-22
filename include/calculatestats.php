@@ -7,17 +7,17 @@
  *   (at your option) any later version.
  *
  *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   projects including, but not limited to phpBB, Magelo Clone,
  *   EQEmulator, EQEditor, and Allakhazam Clone.
  *
  *                                  Author:
- *                           Maudigan(Airwalking) 
+ *                           Maudigan(Airwalking)
  *
  ***************************************************************************/
- 
- 
- 
- 
+
+
+
+
 if ( !defined('INCHARBROWSER') )
 {
 	die("Hacking attempt");
@@ -31,7 +31,7 @@ function acmod($agility,$level) {
 
 	if($agility < 1 || $level < 1)
 		return(0);
-	
+
 	if ($agility <=74){
 		if ($agility == 1)
 			return -24;
@@ -156,7 +156,7 @@ function acmod($agility,$level) {
 				return 27;
 			else if ($level <= 39)
 				return 37;
-			else 
+			else
 				return 44;
 		}
 		else if ($agility == 100 && $level >= 7){
@@ -204,7 +204,7 @@ function acmod($agility,$level) {
 				return 47;
 		}
 		else if ($level <= 19) {
-				return 32;
+			return 32;
 		}
 		//$level is > 19
 		else if ($agility == 120){
@@ -392,7 +392,7 @@ function acmod($agility,$level) {
 	}
 	else{
 		//seems about 21 agil per extra AC pt over 300...
-        return (65 + (($agility-300) / 21));
+		return (65 + (($agility-300) / 21));
 	}
 
 	return 0;
@@ -401,7 +401,7 @@ function acmod($agility,$level) {
 
 function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 
-	$WARRIOR = 1;	
+	$WARRIOR = 1;
 	$CLERIC = 2;
 	$PALADIN = 3;
 	$RANGER = 4;
@@ -417,7 +417,7 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 	$ENCHANTER = 14;
 	$BEASTLORD = 15;
 	$BERSERKER = 16;
-	
+
 	// new formula
 	$avoidance = 0;
 	$avoidance = (acmod($agility,$level) + (($defense*16)/9));
@@ -438,7 +438,7 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 	}
 	$displayed = 0;
 	$displayed += (($avoidance+$mitigation)*1000)/847;	//natural AC
-	
+
 	//Iksar AC, untested
 	if ($race == 128) {
 		$displayed += 12;
@@ -449,10 +449,10 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 		if ($iksarlevel > 0)
 			$displayed += $iksarlevel * 12 / 10;
 	}
-	
+
 	//spell AC bonuses are added directly to natural total
 
-	
+
 	$AC = $displayed;
 	return floor($AC);
 }
@@ -461,7 +461,7 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 ====================================================================
 Class- and race-based resist adjustements modified by Pithy, 2/6/17.
 ====================================================================
-*/ 
+*/
 
 // CLASS-BASED RESIST ADJUSTMENTS
 
@@ -495,7 +495,7 @@ $PRbyClass=array(0,0,0,0,19,0,0,0,23,0,0,0,0,0,0,0);
 $MRbyClass=array(21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 $DRbyClass=array(0,0,23,0,19,0,0,0,0,0,0,0,0,0,19,0);
 $FRbyClass=array(0,0,0,19,0,0,23,0,0,0,0,0,0,0,0,0);
-$CRbyClass=array(0,0,0,19,0,0,0,0,0,0,0,0,0,0,19,0); 
+$CRbyClass=array(0,0,0,19,0,0,0,0,0,0,0,0,0,0,19,0);
 
 
 // RACE-BASED RESIST ADJUSTMENTS
@@ -517,149 +517,149 @@ $CRbyClass=array(0,0,0,19,0,0,0,0,0,0,0,0,0,0,19,0);
 */
 
 function PRbyRace($race) {
-       if($race == 8)   return 20; // dwarf
-  else if($race == 11)  return 20; // halfling
-  else return 15;
+	if($race == 8)   return 20; // dwarf
+	else if($race == 11)  return 20; // halfling
+	else return 15;
 }
 
 function MRbyRace($race) {
-       if($race == 3)   return 30; // erudite
-  else if($race == 8)   return 30; // dwarf
-  else if($race == 128) return 33; // iksar
-  else return 25;
+	if($race == 3)   return 30; // erudite
+	else if($race == 8)   return 30; // dwarf
+	else if($race == 128) return 33; // iksar
+	else return 25;
 }
 
 function DRbyRace($race) {
-       if($race == 3)   return 10; // erudite
-  else if($race == 11)  return 20; // halfling
-  else return 15;
+	if($race == 3)   return 10; // erudite
+	else if($race == 11)  return 20; // halfling
+	else return 15;
 }
 
 function FRbyRace($race) {
-       if($race == 9)   return  5; // troll
-  else if($race == 128) return 30; // iksar
-  else return 25;	
+	if($race == 9)   return  5; // troll
+	else if($race == 128) return 30; // iksar
+	else return 25;
 }
 
 function CRbyRace($race) {
-       if($race == 2)   return 35; // barbarian
-  else if($race == 128) return 15; // iksar
-  else return 25;
+	if($race == 2)   return 35; // barbarian
+	else if($race == 128) return 15; // iksar
+	else return 25;
 }
 
 /* 
 ===================================================================
 End Pithy's class- and race-based resist adjustement modifications.
 ===================================================================
-*/ 
+*/
 
 /* 
 =========================================================================
 Max hitpoint calculation adjustments based on Zygor's Alla'Kabor formula.
 Implemented by Pithy, 2/6/17.
 =========================================================================
-*/ 
+*/
 
 // This function will need to be modified in Luclin for the ND and PE AAs.
 // min(255,$sta) should be changed to $sta when the 255 stat cap is lifted.
 function GetMaxHP($level,$class,$sta,$ihp)
 {
-    $base_hp = GetHPBase($level,$class,min(255,$sta));
-    $hp = floor($base_hp) + floor($ihp);
-    return $hp;
+	$base_hp = GetHPBase($level,$class,min(255,$sta));
+	$hp = floor($base_hp) + floor($ihp);
+	return $hp;
 }
 
 // This function will need to be modified in Luclin for the ND and PE AAs.
 function GetHPBase($level,$class,$sta)
-{ 
-    $lm = floatval(GetLM($class,$level));
-    $post_255_sta = ((max(0,($sta-255))));
-    $staGain = floor(($sta - round($post_255_sta/2))*10/3);
-    $hp_from_level = ($level*$lm);
-    $hp_from_sta = ($level*$lm*$staGain/1000);
-    $base_hp = 5 + $hp_from_level + $hp_from_sta;
-    return $base_hp;
+{
+	$lm = floatval(GetLM($class,$level));
+	$post_255_sta = ((max(0,($sta-255))));
+	$staGain = floor(($sta - round($post_255_sta/2))*10/3);
+	$hp_from_level = ($level*$lm);
+	$hp_from_sta = ($level*$lm*$staGain/1000);
+	$base_hp = 5 + $hp_from_level + $hp_from_sta;
+	return $base_hp;
 }
 
 // This function gets the level multiplier used to calculate base hitpoints.
 function getLM($class, $level) {
 
-    $className = getClassName($class);
+	$className = getClassName($class);
 
-    if($className == 'Monk' || $className == 'Rogue' || $className == 'Beastlord' || $className == 'Bard') {
-    if($level > 57) return 20;
-    if($level > 50) return 19;
-    return 18;
-    }
-     
-    if($className == 'Cleric' || $className == 'Druid' || $className == 'Shaman') {
-    return 15;
-    }
-     
-    if($className == 'Magician' || $className == 'Necromancer' || $className == 'Enchanter' || $className == 'Wizard') {
-    return 12;
-    }
-     
-    if($className == 'Ranger') {
-    if($level > 57) return 21; 
-    return 20;
-    }
-     
-    if($className == 'Shadow Knight' || $className == 'Shadowknight' || $className == 'Paladin') {
-    if($level > 59) return 26; 
-    if($level > 55) return 25; 
-    if($level > 50) return 24; 
-    if($level > 44) return 23; 
-    if($level > 34) return 22; 
-    return 21;
-    }
-     
-    if($className == 'Warrior') {
-    if($level > 59) return 30; 
-    if($level > 56) return 29;
-    if($level > 52) return 28; 
-    if($level > 39) return 27; 
-    if($level > 29) return 25; 
-    if($level > 19) return 23; 
-    return 22;
-    }
+	if($className == 'Monk' || $className == 'Rogue' || $className == 'Beastlord' || $className == 'Bard') {
+		if($level > 57) return 20;
+		if($level > 50) return 19;
+		return 18;
+	}
+
+	if($className == 'Cleric' || $className == 'Druid' || $className == 'Shaman') {
+		return 15;
+	}
+
+	if($className == 'Magician' || $className == 'Necromancer' || $className == 'Enchanter' || $className == 'Wizard') {
+		return 12;
+	}
+
+	if($className == 'Ranger') {
+		if($level > 57) return 21;
+		return 20;
+	}
+
+	if($className == 'Shadow Knight' || $className == 'Shadowknight' || $className == 'Paladin') {
+		if($level > 59) return 26;
+		if($level > 55) return 25;
+		if($level > 50) return 24;
+		if($level > 44) return 23;
+		if($level > 34) return 22;
+		return 21;
+	}
+
+	if($className == 'Warrior') {
+		if($level > 59) return 30;
+		if($level > 56) return 29;
+		if($level > 52) return 28;
+		if($level > 39) return 27;
+		if($level > 29) return 25;
+		if($level > 19) return 23;
+		return 22;
+	}
 }
 
 // This function maps a class number into the corresponding class name.
 // Called by getLM. 
 function getClassName($class) {
-    switch($class) {
-     case '1':  return "Warrior";      break;
-     case '2':  return "Cleric";       break;
-     case '3':  return "Paladin";      break;
-     case '4':  return "Ranger";       break;
-     case '5':  return "Shadow Knight"; break;
-     case '6':  return "Druid";        break;
-     case '7':  return "Monk";         break;
-     case '8':  return "Bard";         break;
-     case '9':  return "Rogue";        break;
-     case '10': return "Shaman";       break;
-     case '11': return "Necromancer";  break;
-     case '12': return "Wizard";       break;
-     case '13': return "Magician";     break;
-     case '14': return "Enchanter";    break;
-     case '15': return "Beastlord";    break;
-     case '16': return "Berserker";    break;   
-     default:   return "Unknown Class"; break;
-    }
+	switch($class) {
+		case '1':  return "Warrior";      break;
+		case '2':  return "Cleric";       break;
+		case '3':  return "Paladin";      break;
+		case '4':  return "Ranger";       break;
+		case '5':  return "Shadow Knight"; break;
+		case '6':  return "Druid";        break;
+		case '7':  return "Monk";         break;
+		case '8':  return "Bard";         break;
+		case '9':  return "Rogue";        break;
+		case '10': return "Shaman";       break;
+		case '11': return "Necromancer";  break;
+		case '12': return "Wizard";       break;
+		case '13': return "Magician";     break;
+		case '14': return "Enchanter";    break;
+		case '15': return "Beastlord";    break;
+		case '16': return "Berserker";    break;
+		default:   return "Unknown Class"; break;
+	}
 }
 
 /* 
 =================================================
 End Pithy's max hitpoint calculation adjustments.
 =================================================
-*/ 
+*/
 
 
 
 //function copied/converted from EQEMU sourcecode may 2, 2009
 function GetCasterClass($class){
-	$WARRIOR = 1;	
+	$WARRIOR = 1;
 	$CLERIC = 2;
 	$PALADIN = 3;
 	$RANGER = 4;
@@ -678,27 +678,27 @@ function GetCasterClass($class){
 
 	switch($class)
 	{
-	case $CLERIC:
-	case $PALADIN:
-	case $RANGER:
-	case $DRUID:
-	case $SHAMAN:
-	case $BEASTLORD:
-		return 'W';
-		break;
+		case $CLERIC:
+		case $PALADIN:
+		case $RANGER:
+		case $DRUID:
+		case $SHAMAN:
+		case $BEASTLORD:
+			return 'W';
+			break;
 
-	case $SHADOWKNIGHT:
-	case $BARD:
-	case $NECROMANCER:
-	case $WIZARD:
-	case $MAGICIAN:
-	case $ENCHANTER:
-		return 'I';
-		break;
+		case $SHADOWKNIGHT:
+		case $BARD:
+		case $NECROMANCER:
+		case $WIZARD:
+		case $MAGICIAN:
+		case $ENCHANTER:
+			return 'I';
+			break;
 
-	default:
-		return 'N';
-		break;
+		default:
+			return 'N';
+			break;
 	}
 }
 
@@ -758,93 +758,94 @@ function GetMaxMana($level,$class,$int,$wis,$imana)
 =============================================================================
 Pithy update, 2/6/17: applied the 255 int/wis hardcap in the first two lines.
 =============================================================================
-*/ 
+*/
 
 //function copied/converted from EQEMU sourcecode oct 26, 2010 
-function GetMaxMana($level,$class,$int,$wis,$imana) 
-{ 
-        // The next two lines should be updated when AAs lift the stat cap.
-        $int = min(255,$int);
-        $wis = min(255,$wis);
-        
-        $WisInt = 0; 
-        $MindLesserFactor = 0; 
-        $MindFactor = 0; 
-        $max_m = 0; 
-        $wisint_mana = 0; 
-        $base_mana = 0; 
-        $ConvertedWisInt = 0; 
-        switch(GetCasterClass($class)) 
-        { 
-                case 'I': 
-                        $WisInt = $int; 
-                        if ($WisInt > 100) { 
-                                $ConvertedWisInt = ((($WisInt - 100) * 5 / 2) + 100); 
-                                if ($WisInt > 201) { 
-                                        $ConvertedWisInt -= (($WisInt - 201) * 5 / 4); 
-                                } 
-                        } 
-                        else { 
-                                $ConvertedWisInt = $WisInt; 
-                        } 
-                        if ($level < 41) { 
-                                $wisint_mana = ($level * 75 * $ConvertedWisInt / 1000); 
-                                $base_mana = ($level * 15); 
-                        } 
-                        else if ($level < 81) { 
-                                $wisint_mana = ((3 * $ConvertedWisInt) + (($level - 40) * 15 * $ConvertedWisInt / 100)); 
-                                $base_mana = (600 + (($level - 40) * 30)); 
-                        } 
-                        else { 
-                                $wisint_mana = (9 * $ConvertedWisInt); 
-                                $base_mana = (1800 + (($level - 80) * 18)); 
-                        } 
-                        $max_mana = $base_mana + $wisint_mana; 
-                        $max_mana += $imana; 
-                        break; 
+function GetMaxMana($level,$class,$int,$wis,$imana)
+{
+	// The next two lines should be updated when AAs lift the stat cap.
+	$int = min(255,$int);
+	$wis = min(255,$wis);
 
-                case 'W': 
-                        $WisInt = $wis; 
-                        if ($WisInt > 100) { 
-                                $ConvertedWisInt = ((($WisInt - 100) * 5 / 2) + 100); 
-                                if ($WisInt > 201) { 
-                                        $ConvertedWisInt -= (($WisInt - 201) * 5 / 4); 
-                                } 
-                        } 
-                        else { 
-                                $ConvertedWisInt = $WisInt; 
-                        } 
-                        if ($level < 41) { 
-                                $wisint_mana = ($level * 75 * $ConvertedWisInt / 1000); 
-                                $base_mana = ($level * 15); 
-                        } 
-                        else if ($level < 81) { 
-                                $wisint_mana = ((3 * $ConvertedWisInt) + (($level - 40) * 15 * $ConvertedWisInt / 100)); 
-                                $base_mana = (600 + (($level - 40) * 30)); 
-                        } 
-                        else { 
-                                $wisint_mana = (9 * $ConvertedWisInt); 
-                                $base_mana = (1800 + (($level - 80) * 18)); 
-                        } 
-                        $max_mana = $base_mana + $wisint_mana; 
-                        $max_mana += $imana; 
-                        break; 
-                                
-                case 'N': { 
-                        $max_mana = 0; 
-                        break; 
-                } 
+	$WisInt = 0;
+	$MindLesserFactor = 0;
+	$MindFactor = 0;
+	$max_m = 0;
+	$wisint_mana = 0;
+	//$base_mana = 0;
+	$base_mana = 3.8505*$level + 0.1869*$level*min(200,$int) + 0.0907*$level*(max(200,$int)-200);
+	$ConvertedWisInt = 0;
+	switch(GetCasterClass($class))
+	{
+		case 'I':
+			$WisInt = $int;
+			if ($WisInt > 100) {
+				$ConvertedWisInt = ((($WisInt - 100) * 5 / 2) + 100);
+				if ($WisInt > 201) {
+					$ConvertedWisInt -= (($WisInt - 201) * 5 / 4);
+				}
+			}
+			else {
+				$ConvertedWisInt = $WisInt;
+			}
+			if ($level < 41) {
+				$wisint_mana = ($level * 75 * $ConvertedWisInt / 1000);
+				$base_mana = ($level * 15);
+			}
+			else if ($level < 81) {
+				$wisint_mana = ((3 * $ConvertedWisInt) + (($level - 40) * 15 * $ConvertedWisInt / 100));
+				$base_mana = (600 + (($level - 40) * 30));
+			}
+			else {
+				$wisint_mana = (9 * $ConvertedWisInt);
+				$base_mana = (1800 + (($level - 80) * 18));
+			}
+			$max_mana = $base_mana + $wisint_mana;
+			$max_mana += $imana;
+			break;
 
-        } 
+		case 'W':
+			$WisInt = $wis;
+			if ($WisInt > 100) {
+				$ConvertedWisInt = ((($WisInt - 100) * 5 / 2) + 100);
+				if ($WisInt > 201) {
+					$ConvertedWisInt -= (($WisInt - 201) * 5 / 4);
+				}
+			}
+			else {
+				$ConvertedWisInt = $WisInt;
+			}
+			if ($level < 41) {
+				$wisint_mana = ($level * 75 * $ConvertedWisInt / 1000);
+				$base_mana = ($level * 15);
+			}
+			else if ($level < 81) {
+				$wisint_mana = ((3 * $ConvertedWisInt) + (($level - 40) * 15 * $ConvertedWisInt / 100));
+				$base_mana = (600 + (($level - 40) * 30));
+			}
+			else {
+				$wisint_mana = (9 * $ConvertedWisInt);
+				$base_mana = (1800 + (($level - 80) * 18));
+			}
+			$max_mana = $base_mana + $wisint_mana;
+			$max_mana += $imana;
+			break;
 
-        return floor($max_mana); 
-} 
+		case 'N': {
+			$max_mana = 0;
+			break;
+		}
+
+	}
+
+	return floor($max_mana);
+}
 
 /* 
 =============================================
 End Pithy's 255 int/wis hardcap modification.
 =============================================
-*/ 
+*/
 
 
 
@@ -886,40 +887,40 @@ function GetMaxEndurance($STR,$STA,$DEX,$AGI,$level,$iendurance)
 }*/
 
 //function copied/converted from EQEMU sourcecode oct 26, 2010 
-function GetMaxEndurance($STR,$STA,$DEX,$AGI,$level,$iendurance) 
-{ 
-        $Stats = ($STR + $STA + $DEX + $AGI)/4; 
-        $base_endurance = 0; 
-        $ConvertedStats = 0; 
-        $sta_end = 0; 
+function GetMaxEndurance($STR,$STA,$DEX,$AGI,$level,$iendurance)
+{
+	$Stats = ($STR + $STA + $DEX + $AGI)/4;
+	$base_endurance = 0;
+	$ConvertedStats = 0;
+	$sta_end = 0;
 
-        if (($Stats) > 100) { 
-                $ConvertedStats = ((($Stats - 100) * 5 / 2) + 100); 
-                if ($Stats > 201) { 
-                        $ConvertedStats -= (($Stats - 201) * 5 / 4); 
-                } 
-        } 
-        else { 
-                $ConvertedStats = $Stats; 
-        } 
+	if (($Stats) > 100) {
+		$ConvertedStats = ((($Stats - 100) * 5 / 2) + 100);
+		if ($Stats > 201) {
+			$ConvertedStats -= (($Stats - 201) * 5 / 4);
+		}
+	}
+	else {
+		$ConvertedStats = $Stats;
+	}
 
-        if ($level < 41) { 
-                $sta_end = ($level * 75 * $ConvertedStats / 1000); 
-                $base_endurance = ($level * 15); 
-        } 
-        else if ($level < 81) { 
-                $sta_end = ((3 * $ConvertedStats) + (($level - 40) * 15 * $ConvertedStats / 100)); 
-                $base_endurance = (600 + (($level - 40) * 30)); 
-        } 
-        else { 
-                $sta_end = (9 * $ConvertedStats); 
-                $base_endurance = (1800 + (($level - 80) * 18)); 
-        } 
-        $max_end = ($base_endurance + $sta_end); 
+	if ($level < 41) {
+		$sta_end = ($level * 75 * $ConvertedStats / 1000);
+		$base_endurance = ($level * 15);
+	}
+	else if ($level < 81) {
+		$sta_end = ((3 * $ConvertedStats) + (($level - 40) * 15 * $ConvertedStats / 100));
+		$base_endurance = (600 + (($level - 40) * 30));
+	}
+	else {
+		$sta_end = (9 * $ConvertedStats);
+		$base_endurance = (1800 + (($level - 80) * 18));
+	}
+	$max_end = ($base_endurance + $sta_end);
 
-        
-        $max_end += $iendurance; 
-        return floor($max_end); 
-} 
+
+	$max_end += $iendurance;
+	return floor($max_end);
+}
 
 ?>
