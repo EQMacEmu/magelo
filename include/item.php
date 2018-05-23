@@ -159,7 +159,7 @@ function GetItem($item) {
 	$spaceswitch= "";
 	if($item["itemtype"] == 54)  { $Output .= "$spaceswitch AUGMENTATION"; $spaceswitch= " "; }
 	if($item["magic"] == 1)      { $Output .= "$spaceswitch MAGIC ITEM";   $spaceswitch= " "; }
-	if($item["loregroup"] == -1)   { $Output .= "$spaceswitch LORE ITEM";    $spaceswitch= " "; }
+	if($item["loregroup"] == -1 || strpos($item["Name"], "*"))   { $Output .= "$spaceswitch LORE ITEM";    $spaceswitch= " "; }
 	if($item["nodrop"] == 0)     { $Output .= "$spaceswitch NO TRADE";       $spaceswitch= " "; }
 	if($item["norent"] == 0)     { $Output .= "$spaceswitch NO RENT";       $spaceswitch= " "; }
 	$Output .= "<br>\n";
@@ -400,6 +400,7 @@ function GetItem($item) {
 		$Output .= $tab."Effect: <a href='".$spellurl.$item["scrolleffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
 		$Output .= "<br>\n";
 	}
+	//admindebug($item);
 	return $Output;
 }
 ?>
