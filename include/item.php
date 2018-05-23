@@ -56,10 +56,8 @@ function strtolower_ucfirst($txt) {
 }
 
 /** Returns the list of slot names '$val' corresponds to (as a bit field) */
-function getslots($val) {
-	global $dbslots;
-	$Result = '';
-	$v = '';
+function getslots($val)
+{ global $dbslots;
 	reset($dbslots);
 	do
 	{ $key=key($dbslots);
@@ -73,47 +71,43 @@ function getslots($val) {
 }
 
 function getraces($val) {
+	if ($val==0)
+		return "NONE";
 	global $dbraces;
-	$Result = '';
-	$v = '';
-	if ($val==0) { return "NONE"; }
 	reset($dbraces);
 	do {
 		$key=key($dbraces);
 		if ($key<=$val) {
 			$val-=$key;
-			$res=current($dbraces).$v.$Result;
+			$res=current($dbraces).$v.$res;
 			$v=" "; }
 	} while (next($dbraces));
-	return $Result;
+	return $res;
 }
 
 function getclasses($val) {
+	if ($val==0)
+		return "NONE";
 	global $dbiclasses;
-	$Result = '';
-	$v = '';
-	if ($val==0) { return "NONE"; }
 	reset($dbiclasses);
 	do {
 		$key=key($dbiclasses);
 		if ($key<=$val) {
 			$val-=$key;
-			$res=current($dbiclasses).$v.$Result;
+			$res=current($dbiclasses).$v.$res;
 			$v=" "; }
 	} while (next($dbiclasses));
-	return $Result;
+	return $res;
 }
 
 function getdeities($val) {
 	global $dbideities;
-	$Result = '';
-	$v = '';
 	reset($dbideities);
 	do {
 		$key=key($dbideities);
-		if ($key<=$val) { $val-=$key; $Result.=$v.current($dbideities); $v=", "; }
+		if ($key<=$val) { $val-=$key; $res.=$v.current($dbideities); $v=", "; }
 	} while (next($dbideities));
-	return $Result;
+	return $res;
 }
 
 //added getautype() function 2/25/2014
