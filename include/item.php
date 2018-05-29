@@ -153,7 +153,7 @@ function GetItem($item) {
 	//return buffer, build item here
 	$Output = "";
 	$tab = "           ";
-	$spellurl = 'https://www.takproject.net/takp-allaclone/spell.php?id=';
+	$spellurl = 'https://www.takproject.net/allaclone/spell.php?id=';
 
 	// LORE AUGMENT NODROP NORENT MAGIC
 	$spaceswitch= "";
