@@ -489,13 +489,59 @@ Bonuses are level-dependent: 4 (or 8) + floor(level/4).
 That gives 19 (or 23) at level 60, updated to 20 (or 24) at 65.
 The warrior MR bonus is different: 21 at 60, 24 at 65.
 The arrays below have the level 60 values.
+
+2020-03-05-Mokli: matched the values @60 to TAKP values verified on dev server.  Basically lowered most by 4, raised War MR up to 30.
+
+
+$PRbyClass=array(0,0,0,0,0,15,0,0,0,19,0,0,0,0,0,0,0);
+$MRbyClass=array(0,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+$DRbyClass=array(0,0,0,19,0,15,0,0,0,0,0,0,0,0,0,15,0);
+$FRbyClass=array(0,0,0,0,15,0,0,19,0,0,0,0,0,0,0,0,0);
+$CRbyClass=array(0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,15,0);
+
+2020-03-04-Mokli:  quick edit to above.  Padded arrays with a 0, since arrays start with 0 not 1.  Was causing class alignment to be shifted by 1.
+2020-03-08-Mokli:  commented the above out entirely.  Handling with functions for each just below here.
 */
 
-$PRbyClass=array(0,0,0,0,19,0,0,0,23,0,0,0,0,0,0,0);
-$MRbyClass=array(21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-$DRbyClass=array(0,0,23,0,19,0,0,0,0,0,0,0,0,0,19,0);
-$FRbyClass=array(0,0,0,19,0,0,23,0,0,0,0,0,0,0,0,0);
-$CRbyClass=array(0,0,0,19,0,0,0,0,0,0,0,0,0,0,19,0);
+function PRbyClass($class) {
+	if(($class == 5) && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 5) && ($level < 50)) return 4;
+	else if(($class == 9)  && ($level >= 50)) return floor(($level - 49) + 8);
+	else if(($class == 9)  && ($level < 50)) return 8;
+	else return 0;
+}
+
+function MRbyClass($class) {
+	if(($class == 1) return floor($level / 2);
+	else return 0;
+}
+
+function DRbyClass($class) {
+	if(($class == 3) && ($level >= 50)) return floor(($level - 49) + 8);
+	else if(($class == 3) && ($level < 50)) return 8;	
+	else if(($class == 5) && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 5) && ($level < 50)) return 4;
+	else if(($class == 15) && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 15) && ($level < 50)) return 4;
+	else return 0;
+}
+
+function FRbyClass($class) {
+	if(($class == 4) && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 4) && ($level < 50)) return 4;
+	else if(($class == 7)  && ($level >= 50)) return floor(($level - 49) + 8);
+	else if(($class == 7)  && ($level < 50)) return 8;
+	else return 0;
+}
+
+function CRbyClass($class) {
+	if(($class == 4) && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 4) && ($level < 50)) return 4;
+	else if(($class == 15)  && ($level >= 50)) return floor(($level - 49) + 4);
+	else if(($class == 15)  && ($level < 50)) return 4;
+	else return 0;
+}
+
 
 
 // RACE-BASED RESIST ADJUSTMENTS
@@ -525,7 +571,6 @@ function PRbyRace($race) {
 function MRbyRace($race) {
 	if($race == 3)   return 30; // erudite
 	else if($race == 8)   return 30; // dwarf
-	else if($race == 128) return 33; // iksar
 	else return 25;
 }
 
@@ -546,6 +591,11 @@ function CRbyRace($race) {
 	else if($race == 128) return 15; // iksar
 	else return 25;
 }
+
+/* 2020-03-04-Mokli edit:
+Removed from MRbyRace:  	else if($race == 128) return 33; // iksar
+Iksar does not appear to have an MR starting bonus on TAKP
+*/
 
 /* 
 ===================================================================
