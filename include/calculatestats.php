@@ -28,7 +28,8 @@ function GetMaxAtk($iatk, $str, $offense) {
 }
 
 function acmod($agility,$level) {
-
+    global $charlevel;
+    $charlevel = $level;
 	if($agility < 1 || $level < 1)
 		return(0);
 
@@ -400,7 +401,8 @@ function acmod($agility,$level) {
 
 
 function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
-
+    global $charlevel;
+    $charlevel = $level;
 	$WARRIOR = 1;
 	$CLERIC = 2;
 	$PALADIN = 3;
@@ -442,7 +444,7 @@ function GetMaxAC($agility, $level, $defense, $class, $iac, $race) {
 	//Iksar AC, untested
 	if ($race == 128) {
 		$displayed += 12;
-		$iksarlevel = $evel;
+		$iksarlevel = $level;
 		$iksarlevel -= 10;
 		if ($iksarlevel > 25)
 			$iksarlevel = 25;
@@ -504,41 +506,46 @@ $CRbyClass=array(0,0,0,0,15,0,0,0,0,0,0,0,0,0,0,15,0);
 */
 
 function PRbyClass($class) {
-	if(($class == 5) && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 5) && ($level < 50)) return 4;
-	else if(($class == 9)  && ($level >= 50)) return floor(($level - 49) + 8);
-	else if(($class == 9)  && ($level < 50)) return 8;
+    global $charlevel;
+	if(($class == 5) && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 5) && ($charlevel < 50)) return 4;
+	else if(($class == 9)  && ($charlevel >= 50)) return floor(($charlevel - 49) + 8);
+	else if(($class == 9)  && ($charlevel < 50)) return 8;
 	else return 0;
 }
 
 function MRbyClass($class) {
-	if(($class == 1) return floor($level / 2);
+    global $charlevel;
+	if($class == 1) return floor($charlevel / 2);
 	else return 0;
 }
 
 function DRbyClass($class) {
-	if(($class == 3) && ($level >= 50)) return floor(($level - 49) + 8);
-	else if(($class == 3) && ($level < 50)) return 8;	
-	else if(($class == 5) && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 5) && ($level < 50)) return 4;
-	else if(($class == 15) && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 15) && ($level < 50)) return 4;
+    global $charlevel;
+	if(($class == 3) && ($charlevel >= 50)) return floor(($charlevel - 49) + 8);
+	else if(($class == 3) && ($charlevel < 50)) return 8;
+	else if(($class == 5) && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 5) && ($charlevel < 50)) return 4;
+	else if(($class == 15) && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 15) && ($charlevel < 50)) return 4;
 	else return 0;
 }
 
 function FRbyClass($class) {
-	if(($class == 4) && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 4) && ($level < 50)) return 4;
-	else if(($class == 7)  && ($level >= 50)) return floor(($level - 49) + 8);
-	else if(($class == 7)  && ($level < 50)) return 8;
+    global $charlevel;
+	if(($class == 4) && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 4) && ($charlevel < 50)) return 4;
+	else if(($class == 7)  && ($charlevel >= 50)) return floor(($charlevel - 49) + 8);
+	else if(($class == 7)  && ($charlevel < 50)) return 8;
 	else return 0;
 }
 
 function CRbyClass($class) {
-	if(($class == 4) && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 4) && ($level < 50)) return 4;
-	else if(($class == 15)  && ($level >= 50)) return floor(($level - 49) + 4);
-	else if(($class == 15)  && ($level < 50)) return 4;
+    global $charlevel;
+	if(($class == 4) && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 4) && ($charlevel < 50)) return 4;
+	else if(($class == 15)  && ($charlevel >= 50)) return floor(($charlevel - 49) + 4);
+	else if(($class == 15)  && ($charlevel < 50)) return 4;
 	else return 0;
 }
 

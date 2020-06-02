@@ -66,10 +66,6 @@ $aatabs[2] = $language['AAS_TAB_2'];
 $aatabs[3] = $language['AAS_TAB_3'];
 $aatabs[4] = $language['AAS_TAB_4'];
 $aatabs[5] = $language['AAS_TAB_5'];
-$aatabs[6] = $language['AAS_TAB_6'];
-$aatabs[7] = $language['AAS_TAB_7'];
-$aatabs[8] = $language['AAS_TAB_8']; //added 9/29/2014
-$aatabs[10] = $language['AAS_TAB_10']; //added 9/29.2014
 
 //drop page
 $d_title = " - ".$name.$language['PAGE_TITLES_AAS'];
@@ -100,7 +96,8 @@ foreach ($aatabs as $key => $value) {
   $Display = "none";
 
   // pull the classes AA's from the DB
-  $query = "SELECT skill_id, name, cost, cost_inc, max_level FROM altadv_vars WHERE type = ".$key." AND (classes+berserker) & ".$classbit[$char->GetValue('class')]." ORDER BY skill_id";
+  $query = "SELECT skill_id, name, cost, cost_inc, max_level FROM altadv_vars WHERE type = ".$key." AND ".$classbit[$char->GetValue('class')]." AND name NOT LIKE 'NOT USED' ORDER BY skill_id";
+
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
   $results = $game_db->query($query);
   foreach($results AS $row) {

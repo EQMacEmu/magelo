@@ -244,11 +244,7 @@ $language['AAS_TAB_1'] = "General";
 $language['AAS_TAB_2'] = "Archetype"; 
 $language['AAS_TAB_3'] = "Class"; 
 $language['AAS_TAB_4'] = "POP-Advance"; 
-$language['AAS_TAB_5'] = "POP-Ability"; 
-$language['AAS_TAB_6'] = "Gates"; 
-$language['AAS_TAB_7'] = "Omens"; 
-$language['AAS_TAB_8'] = "Veteran"; 
-$language['AAS_TAB_10'] = "Darkhollow"; 
+$language['AAS_TAB_5'] = "POP-Ability";
 
 //help language 
 $language['HELP_HELP'] = "Help"; 
