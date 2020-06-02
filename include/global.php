@@ -39,6 +39,8 @@ include_once ( "template.php" );
 //templates
 $template = new Template("./templates");
 
+$charlevel = null;
+
 // elements
 $dbelements=array("Unknown","Magic","Fire","Cold","Poison","Disease");
 
