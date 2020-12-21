@@ -75,6 +75,127 @@ $bgp 		= $char->GetValue('gold_bank');
 $bsp 		= $char->GetValue('silver_bank');
 $bcp 		= $char->GetValue('copper_bank'); 
 
+// solar: new stats 2020-12-21
+$query = "SELECT
+  weight,
+  aa_points_unspent,
+  aa_points_spent,
+  
+  hp_regen_standing_base,
+  hp_regen_sitting_base,
+  hp_regen_resting_base,
+  hp_regen_standing_total,
+  hp_regen_sitting_total,
+  hp_regen_resting_total,
+  hp_regen_item,
+  hp_regen_item_cap,
+  hp_regen_aa,
+  
+  mana_regen_standing_base,
+  mana_regen_sitting_base,
+  mana_regen_standing_total,
+  mana_regen_sitting_total,
+  mana_regen_item,
+  mana_regen_item_cap,
+  mana_regen_aa,
+  
+  hp_max_total,
+  hp_max_item,
+  
+  mana_max_total,
+  mana_max_item,
+  
+  end_max_total,
+  
+  ac_total,
+  ac_item,
+  ac_shield,
+  ac_avoidance,
+  ac_mitigation,
+  
+  atk_total,
+  atk_item,
+  atk_item_cap,
+  atk_offense,
+  atk_tohit,
+  
+  STR_total,
+  STR_base,
+  STR_item,
+  STR_aa,
+  STR_cap,
+  
+  STA_total,
+  STA_base,
+  STA_item,
+  STA_aa,
+  STA_cap,
+  
+  AGI_total,
+  AGI_base,
+  AGI_item,
+  AGI_aa,
+  AGI_cap,
+  
+  DEX_total,
+  DEX_base,
+  DEX_item,
+  DEX_aa,
+  DEX_cap,
+
+  CHA_total,
+  CHA_base,
+  CHA_item,
+  CHA_aa,
+  CHA_cap,
+  
+  INT_total,
+  INT_base,
+  INT_item,
+  INT_aa,
+  INT_cap,
+  
+  WIS_total,
+  WIS_base,
+  WIS_item,
+  WIS_aa,
+  WIS_cap,
+  
+  MR_total,
+  MR_item,
+  MR_aa,
+  MR_cap,
+  
+  FR_total,
+  FR_item,
+  FR_aa,
+  FR_cap,
+  
+  CR_total,
+  CR_item,
+  CR_aa,
+  CR_cap,
+  
+  DR_total,
+  DR_item,
+  DR_aa,
+  DR_cap,
+  
+  PR_total,
+  PR_item,
+  PR_aa,
+  PR_cap
+FROM character_magelo_stats
+WHERE id = $charID";
+if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
+$results = $game_db->query($query);
+$character_magelo_stats = array();
+if(numRows($results) != 0)
+{
+  $row = fetchRows($results);
+  $character_magelo_stats = $row[0];
+}
+
 //load guild name
 //rewritten because the guild id was removed from the profile 9/26/2014
 $query = "SELECT guilds.name, guild_members.rank 
@@ -128,8 +249,8 @@ $template->set_filenames(array(
 
 $template->assign_vars(array(  
   'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
-  'REGEN' => $itemstats->regen(),
-  'FT' => $itemstats->FT(),
+  'REGEN' => min($character_magelo_stats['hp_regen_item'], $character_magelo_stats['hp_regen_item_cap']),
+  'FT' => min($character_magelo_stats['mana_regen_item'], $character_magelo_stats['mana_regen_item_cap']),
   'DS' => $itemstats->DS(),
   'HASTE' => $itemstats->haste(),
   'FIRST_NAME' => $name,
@@ -141,24 +262,24 @@ $template->assign_vars(array(
   'RACE' => $dbracenames[$race],
   'CLASS_NUM' => $class,
   'DEITY' => $dbdeities[$deity],
-  'HP' => GetMaxHP($level,$class,($baseSTA+$itemstats->STA()),$itemstats->hp()),
-  'MANA' => GetMaxMana($level,$class,($baseINT+$itemstats->INT()),($baseWIS+$itemstats->WIS()),+$itemstats->mana()),
-  'ENDR' => GetMaxEndurance(($baseSTR+$itemstats->STR()),($baseSTA+$itemstats->STA()),($baseDEX+$itemstats->DEX()),($baseAGI+$itemstats->AGI()),$level,$itemstats->endurance()),
-  'AC' => GetMaxAC(($baseAGI+$itemstats->AGI()), $level, $defense, $class, $itemstats->AC(), $race),
-  'ATK' => GetMaxAtk($itemstats->attack(), ($baseSTR+$itemstats->STR()), $offense),
-  'STR' => ($baseSTR+$itemstats->STR()),
-  'STA' => ($baseSTA+$itemstats->STA()),
-  'DEX' => ($baseDEX+$itemstats->DEX()),
-  'AGI' => ($baseAGI+$itemstats->AGI()),
-  'INT' => ($baseINT+$itemstats->INT()),
-  'WIS' => ($baseWIS+$itemstats->WIS()),
-  'CHA' => ($baseCHA+$itemstats->CHA()),
-  'POISON' => (PRbyRace($race)+PRbyClass($class)+$itemstats->PR()),
-  'FIRE' => (FRbyRace($race)+FRbyClass($class)+$itemstats->FR()),
-  'MAGIC' => (MRbyRace($race)+MRbyClass($class)+$itemstats->MR()),
-  'DISEASE' => (DRbyRace($race)+DRbyClass($class)+$itemstats->DR()),
-  'COLD' => (CRbyRace($race)+CRbyClass($class)+$itemstats->CR()),
-  'WEIGHT' => round($itemstats->WT()/10),
+  'HP' => $character_magelo_stats['hp_max_total'],
+  'MANA' => $character_magelo_stats['mana_max_total'],
+  'ENDR' => $character_magelo_stats['end_max_total'],
+  'AC' => $character_magelo_stats['ac_total'],
+  'ATK' => $character_magelo_stats['atk_total'],
+  'STR' => min($character_magelo_stats['STR_total'], $character_magelo_stats['STR_cap']),
+  'STA' => min($character_magelo_stats['STA_total'], $character_magelo_stats['STA_cap']),
+  'DEX' => min($character_magelo_stats['DEX_total'], $character_magelo_stats['DEX_cap']),
+  'AGI' => min($character_magelo_stats['AGI_total'], $character_magelo_stats['AGI_cap']),
+  'INT' => min($character_magelo_stats['INT_total'], $character_magelo_stats['INT_cap']),
+  'WIS' => min($character_magelo_stats['WIS_total'], $character_magelo_stats['WIS_cap']),
+  'CHA' => min($character_magelo_stats['CHA_total'], $character_magelo_stats['CHA_cap']),
+  'POISON' => min($character_magelo_stats['PR_total'], $character_magelo_stats['PR_cap']),
+  'FIRE' => min($character_magelo_stats['FR_total'], $character_magelo_stats['FR_cap']),
+  'MAGIC' => min($character_magelo_stats['MR_total'], $character_magelo_stats['MR_cap']),
+  'DISEASE' => min($character_magelo_stats['DR_total'], $character_magelo_stats['DR_cap']),
+  'COLD' => min($character_magelo_stats['CR_total'], $character_magelo_stats['CR_cap']),
+  'WEIGHT' => $character_magelo_stats['weight'],
   'PP' => (($mypermission['coininventory'])?$language['MESSAGE_DISABLED']:$pp),
   'GP' => (($mypermission['coininventory'])?$language['MESSAGE_DISABLED']:$gp),
   'SP' => (($mypermission['coininventory'])?$language['MESSAGE_DISABLED']:$sp),
