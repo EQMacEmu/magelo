@@ -184,7 +184,10 @@ $query = "SELECT
   PR_total,
   PR_item,
   PR_aa,
-  PR_cap
+  PR_cap,
+  
+  damage_shield_item,
+  haste_item
 FROM character_magelo_stats
 WHERE id = $charID";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
@@ -251,8 +254,8 @@ $template->assign_vars(array(
   'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
   'REGEN' => min($character_magelo_stats['hp_regen_item'], $character_magelo_stats['hp_regen_item_cap']),
   'FT' => min($character_magelo_stats['mana_regen_item'], $character_magelo_stats['mana_regen_item_cap']),
-  'DS' => $itemstats->DS(),
-  'HASTE' => $itemstats->haste(),
+  'DS' => $character_magelo_stats['damage_shield_item'],
+  'HASTE' => $character_magelo_stats['haste_item'],
   'FIRST_NAME' => $name,
   'LAST_NAME' => $last_name,
   'TITLE' => $title,
