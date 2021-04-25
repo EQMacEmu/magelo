@@ -60,10 +60,9 @@ function display(type, id, prefix) {
             <table class='StatTable'> 
               <tr> 
                 <td nowrap> 
-                  {L_REGEN}<br>{L_FT}<br>{L_DS}<br>{L_HASTE} 
+                  {L_REGEN}<br>{L_FT}<br>{L_ATK}<br>{L_DS}<br>{L_HASTE}
                 </td> 
-                <td> 
-                  {REGEN}<br>{FT}<br>{DS}<br>{HASTE}% 
+                <td>{REGEN} / {REGEN_cap}<br>{FT} / {FT_cap}<br>{ATK_item} / {ATK_item_cap}<br>{DS}<br>{HASTE}%
                 </td> 
               </tr> 
             </table> 
@@ -95,31 +94,31 @@ function display(type, id, prefix) {
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_STR}<br>{L_STA}<br>{L_AGI}<br>{L_DEX}</td> 
-                  <td width='100%'><font color='#00FF00'>
-                      <span class="player-str">{STR}</span><br>
-                      <span class="player-sta">{STA}</span><br>
-                      <span class="player-agi">{AGI}</span><br>
-                      <span class="player-dex">{DEX}</span></font>
+                  <td width='100%'>
+                      <span class="player-str"><font color='#00FF00'>{STR}</font></span> / <span>{STR_cap}</span><br>
+                      <span class="player-sta"><font color='#00FF00'>{STA}</font></span> / <span>{STA_cap}</span><br>
+                      <span class="player-agi"><font color='#00FF00'>{AGI}</font></span> / <span>{AGI_cap}</span><br>
+                      <span class="player-dex"><font color='#00FF00'>{DEX}</font></span> / <span>{DEX_cap}</span></font>
                   </td>
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_WIS}<br>{L_INT}<br>{L_CHA}</td> 
-                  <td width='100%'><font color='#00FF00'>
-                      <span class="player-wis">{WIS}</span><br>
-                      <span class="player-int">{INT}</span><br>
-                      <span class="player-cha">{CHA}</span></font>
+                  <td width='100%'>
+                      <span class="player-wis"><font color='#00FF00'>{WIS}</font></span> / <span>{WIS_cap}</span><br>
+                      <span class="player-int"><font color='#00FF00'>{INT}</font></span> / <span>{INT_cap}</span><br>
+                      <span class="player-cha"><font color='#00FF00'>{CHA}</font></span> / <span>{CHA_cap}</span></font>
                   </td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
                 <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}</td>
-                  <td><font color='#00FF00'>
-                      <span class="player-pr">{POISON}</span><br>
-                      <span class="player-mr">{MAGIC}</span><br>
-                      <span class="player-dr">{DISEASE}</span><br>
-                      <span class="player-fr">{FIRE}</span><br>
-                      <span class="player-cr">{COLD}</span></font>
+                  <td>
+                      <span class="player-pr"><font color='#00FF00'>{POISON}</font></span> / <span>{POISON_cap}</span><br>
+                      <span class="player-mr"><font color='#00FF00'>{MAGIC}</font></span> / <span>{MAGIC_cap}</span><br>
+                      <span class="player-dr"><font color='#00FF00'>{DISEASE}</font></span> / <span>{DISEASE_cap}</span><br>
+                      <span class="player-fr"><font color='#00FF00'>{FIRE}</font></span> / <span>{FIRE_cap}</span><br>
+                      <span class="player-cr"><font color='#00FF00'>{COLD}</font></span> / <span>{COLD_cap}</span></font>
                   </td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
