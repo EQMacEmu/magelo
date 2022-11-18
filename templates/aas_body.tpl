@@ -55,10 +55,10 @@ function color(id) {
                   <td class='ColumnHead' style='padding: 0px 30px 4px 15px;' align='center'>{L_COST}</td>
                 </tr>
                 <!-- BEGIN aas -->
-                <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut ="this.style.background = 'none'" >
-                  <td style='padding: 1px 3px 0px 30px;'>{boxes.aas.NAME}</td>
-                  <td style='padding: 1px 15px 0px 30px;' align='center'>{boxes.aas.CUR} / {boxes.aas.MAX}</td>
-                  <td style='padding: 1px 30px 0px 15px;' align='center'>{boxes.aas.COST}</td>
+                <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut ="this.style.background = 'none'">
+                  <td style='padding: 1px 3px 0px 30px;color:{boxes.aas.COLOR};'>{boxes.aas.NAME}</td>
+                  <td style='padding: 1px 15px 0px 30px;color:{boxes.aas.COLOR};' align='center'>{boxes.aas.CUR}/{boxes.aas.MAX}</td>
+                  <td style='padding: 1px 30px 0px 15px;color:{boxes.aas.COLOR};' align='center'>{boxes.aas.COST}</td>
                 </tr> 
                 <!-- END aas -->        
               </table>

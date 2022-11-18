@@ -243,8 +243,8 @@ $language['AAS_POINTS_SPENT'] = "Point Spent";
 $language['AAS_TAB_1'] = "General"; 
 $language['AAS_TAB_2'] = "Archetype"; 
 $language['AAS_TAB_3'] = "Class"; 
-$language['AAS_TAB_4'] = "POP-Advance"; 
-$language['AAS_TAB_5'] = "POP-Ability";
+$language['AAS_TAB_4'] = "PoP Advance"; 
+$language['AAS_TAB_5'] = "PoP Ability";
 
 //help language 
 $language['HELP_HELP'] = "Help"; 

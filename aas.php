@@ -24,6 +24,8 @@
  *   September 28, 2014 - Maudigan
  *      replaced char blob
  *      added new aa tabs
+ *   November 18, 2022 - solar
+ *      tweaked for TAKP
  ***************************************************************************/
  
 define('INCHARBROWSER', true);
@@ -48,16 +50,16 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['AAs'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if (!$mypermission['AAs']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
-$classbit = array(0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,1);
 //rewritten to replace character blob - 9/929/3014
 //this probably needs the logic rethought, this is a bandaid
 $temp = $char->GetTable("character_alternate_abilities");
 $aa_array = array();
 foreach($temp as $key => $value)
 {
-   $aa_array[$value["aa_id"]] = $value["aa_value"];
+   $parent_id = $value["aa_value"] <= 1 ? $value["aa_id"] : $value["aa_id"] - ($value["aa_value"] - 1);
+   $aa_array[$parent_id] = $value["aa_value"];
 }
 
 $aatabs = array();
@@ -96,7 +98,7 @@ foreach ($aatabs as $key => $value) {
   $Display = "none";
 
   // pull the classes AA's from the DB
-  $query = "SELECT skill_id, name, cost, cost_inc, max_level FROM altadv_vars WHERE type = ".$key." AND ".$classbit[$char->GetValue('class')]." AND name NOT LIKE 'NOT USED' ORDER BY skill_id";
+  $query = "SELECT skill_id, name, cost, cost_inc, max_level FROM altadv_vars WHERE type = ".$key." AND (classes & 1 << ".$char->GetValue('class').") != 0 AND eqmacid not in (14, 22, 51, 54, 59, 83, 88, 91, 92, 93, 95, 96, 99, 105, 106, 145) ORDER BY eqmacid";
 
   if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
   $results = $game_db->query($query);
@@ -105,11 +107,15 @@ foreach ($aatabs as $key => $value) {
     for($i = 1 ; $i <= $aa_array[$row['skill_id']] ; $i++) {
       $SpentAA += $row['cost'] + ($row['cost_inc'] * ($i - 1));
     }
-    $template->assign_block_vars("boxes.aas", array( 	   
+    $next_level_cost = "";
+    if($row['max_level'] > $aa_array[$row['skill_id']])
+      $next_level_cost = $row['cost'] + $row['cost_inc'] * $aa_array[$row['skill_id']];
+    $template->assign_block_vars("boxes.aas", array( 
+      'COLOR' => $next_level_cost == "" ? '#CCCCCC' : '#FFFFFF',
       'NAME' => $row['name'],
       'CUR' => sprintf("%d", $aa_array[$row['skill_id']]),
       'MAX' => $row['max_level'],
-      'COST' => $row['cost'])
+      'COST' => $next_level_cost)
     );
   }
 }
