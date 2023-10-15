@@ -105,8 +105,6 @@ $query = "SELECT
   mana_max_total,
   mana_max_item,
   
-  end_max_total,
-  
   ac_total,
   ac_item,
   ac_shield,
@@ -271,7 +269,6 @@ $template->assign_vars(array(
   'DEITY' => $dbdeities[$deity],
   'HP' => $character_magelo_stats['hp_max_total'],
   'MANA' => $character_magelo_stats['mana_max_total'],
-  'ENDR' => $character_magelo_stats['end_max_total'],
   'AC' => $character_magelo_stats['ac_total'],
   'ATK' => $character_magelo_stats['atk_total'],
   'STR' => $character_magelo_stats['STR_total'],
@@ -316,7 +313,6 @@ $template->assign_vars(array(
   'L_HASTE' => $language['CHAR_HASTE'],
   'L_HP' => $language['CHAR_HP'],
   'L_MANA' => $language['CHAR_MANA'],
-  'L_ENDR' => $language['CHAR_ENDR'],
   'L_AC' => $language['CHAR_AC'],
   'L_ATK' => $language['CHAR_ATK'],
   'L_STR' => $language['CHAR_STR'],
