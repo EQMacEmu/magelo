@@ -50,6 +50,7 @@ else $charName = $_GET['char'];
 $char = new profile($charName); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
+$level = $char->GetValue('level');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission 
@@ -193,13 +194,13 @@ $template->assign_block_vars( "mainhead.main" , array( 'ID' => 3, 'FLAG' => $Has
 if (getzoneflag(208) && getflag(3, "mavuin")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 4, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoSPoV']) ); 
 
-if (getzoneflag(211) && getflag(3, "mavuin") && getflag(2, "aerindar")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if ((getzoneflag(211) && getflag(3, "mavuin") && getflag(2, "aerindar")) || $level > 61) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 5, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_HoHA']) ); 
 
 if (getzoneflag(209) && getflag(3, "mavuin") && getflag(3, "karana")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 6, 'FLAG' =>  $HasFlag, 'TEXT' => $language['FLAG_PoP_BoT']) ); 
 
-if (getzoneflag(220) && getflag(3, "mavuin") && getflag(2, "aerindar") && getflagbit(1, "hohtrials") && getflag(2, "hohtrials") && getflag(3, "hohtrials")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(220) && getflagbit(1, "hohtrials") && getflag(2, "hohtrials") && getflag(3, "hohtrials")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 7, 'FLAG' =>  $HasFlag, 'TEXT' => $language['FLAG_PoP_HoHB']) ); 
 
 if (getzoneflag(207) && getflag(4, "thelin") && getflag(5, "fuirstel")) { $HasFlag = 1; } else { $HasFlag = 0; } 
@@ -241,11 +242,9 @@ $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
 //HoH A 
 $template->assign_block_vars( "head" , array( 'ID' => 5, 'NAME' => $language['FLAG_PoP_HoHA']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => ($level > 61), 'TEXT' => $language['FLAG_PoP_AD3']) ); 
 //BoT 
 $template->assign_block_vars( "head" , array( 'ID' => 6, 'NAME' => $language['FLAG_PoP_BoT']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
@@ -259,8 +258,6 @@ $template->assign_block_vars( "head" , array( 'ID' => 7, 'NAME' => $language['FL
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(1, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(2, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(3, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
@@ -324,8 +321,6 @@ $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "karana
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "karana"), 'TEXT' => $language['FLAG_PoP_Askr2']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "karana"), 'TEXT' => $language['FLAG_PoP_Askr3']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "karana"), 'TEXT' => $language['FLAG_PoP_Agnarr']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(1, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(2, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(3, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
