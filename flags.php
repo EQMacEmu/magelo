@@ -69,16 +69,43 @@ if (numRows($results)) {
 }
 
 //============================= 
+//preload all quintessence items
+//============================= 
+$quintessence_items = array(); 
+$quintessence_item_id = 29165;
+$rathe_item_id = 29146;
+$fennin_item_id = 29147;
+$coirnav_item_id = 29163;
+$xegony_item_id = 29164;
+$query = "SELECT itemid FROM character_inventory WHERE id = $charID AND itemid IN ($rathe_item_id, $fennin_item_id, $coirnav_item_id, $xegony_item_id, $quintessence_item_id);";
+if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query);
+$results = $game_db->query($query);
+if (numRows($results)) {
+    foreach ($results AS $row) {
+        $quintessence_items[$row['itemid']] = 1;
+    }
+}
+
+//============================= 
 //preload all zone flags 
 //============================= 
 $zone_flags = array(); 
-$query = "SELECT zoneID FROM zone_flags WHERE charID = $charID;";
+$query = "SELECT zoneID FROM character_zone_flags WHERE id = $charID;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
 $results = $game_db->query($query);
 if (numRows($results)) {
     foreach ($results AS $row) {
         $zone_flags[] = $row['zoneID'];
     }
+}
+// These flags get merged then deleted along the way
+if(array_key_exists("zebuxoruk", $quest_globals)) {
+    $quest_globals["karana"] = 4;
+    $quest_globals["marr_book"] = 1;
+}
+if(array_key_exists("cipher", $quest_globals)) {
+    $quest_globals["mmarr"] = 1;
+    $quest_globals["saryrn"] = 1;
 }
 
 //============================= 
@@ -89,6 +116,24 @@ function getflag($condition, $flagname) {
     if (!array_key_exists($flagname,$quest_globals)) return 0; 
     if ($quest_globals[$flagname]<$condition) return 0; 
     return 1; 
+}
+
+function getflagbit($bit, $flagname) {
+    global $quest_globals;    
+    if (!array_key_exists($flagname,$quest_globals)) return 0; 
+    if (substr($quest_globals[$flagname], 2, 1) != "1") return 0; 
+    return 1; 
+}
+
+function timeitem($item) {
+    global $quintessence_items;
+    global $quest_globals;
+    if (array_key_exists($item, $quintessence_items) ||
+        array_key_exists($quintessence_item_id, $quintessence_items) ||
+	array_key_exists("time", $quest_globals)) {
+        return 1;
+    }
+    return 0;
 }
 
 //============================= 
@@ -136,157 +181,172 @@ $HasFlag = 0;
 
 $template->assign_block_vars( "mainhead" , array( 'TEXT' => $language['FLAG_PoP']) ); 
 
-if (getzoneflag(221) && getflag(1, "pop_pon_hedge_jezith") && getflag(1, "pop_pon_construct")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(221) && getflag(2, "thelin")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 1, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoNB']) ); 
 
-if (getzoneflag(214) && getflag(1, "pop_poi_behometh_preflag") && getflag(1, "pop_poi_behometh_flag")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(214) && getflag(2, "zeks")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 2, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTactics']) ); 
 
-if (getzoneflag(200) && getflag(1, "pop_pod_elder_fuirstel")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(200) && getflag(3, "fuirstel")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 3, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_CoD']) ); 
 
-if (getzoneflag(208) && getflag(1, "pop_poj_valor_storms")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(208) && getflag(3, "mavuin")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 4, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoSPoV']) ); 
 
-if (getzoneflag(211) && getflag(1, "pop_poj_valor_storms") && getflag(1, "pop_pov_aerin_dar")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(211) && getflag(3, "mavuin") && getflag(2, "aerindar")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 5, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_HoHA']) ); 
 
-if (getzoneflag(209) && getflag(1, "pop_poj_valor_storms") && getflag(1, "pop_pos_askr_the_lost_final")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(209) && getflag(3, "mavuin") && getflag(3, "karana")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 6, 'FLAG' =>  $HasFlag, 'TEXT' => $language['FLAG_PoP_BoT']) ); 
 
-if (getzoneflag(220) && getflag(1, "pop_poj_valor_storms") && getflag(1, "pop_pov_aerin_dar") && getflag(1, "pop_hoh_faye") && getflag(1, "pop_hoh_trell") && getflag(1, "pop_hoh_garn")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(220) && getflag(3, "mavuin") && getflag(2, "aerindar") && getflagbit(1, "hohtrials") && getflag(2, "hohtrials") && getflag(3, "hohtrials")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 7, 'FLAG' =>  $HasFlag, 'TEXT' => $language['FLAG_PoP_HoHB']) ); 
 
-if (getzoneflag(207) && getflag(1, "pop_pod_elder_fuirstel") && getflag(1, "pop_ponb_poxbourne") && getflag(1, "pop_cod_final")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(207) && getflag(4, "thelin") && getflag(5, "fuirstel")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 8, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTorment']) ); 
 
-if (getzoneflag(212) && getflag(1, "pop_poi_behometh_flag") && getflag(1, "pop_tactics_tallon") && getflag(1, "pop_tactics_vallon") && getflag(1, "pop_hohb_marr") && getflag(1, "pop_pot_saryrn_final")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(212) && getflag(6, "zeks") && getflag(1, "cipher")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 9, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_SolRoTower']) ); 
 
-if (getzoneflag(217) && getflag(1, "pop_poi_behometh_flag") && getflag(1, "pop_tactics_tallon") && getflag(1, "pop_tactics_vallon") && getflag(1, "pop_hohb_marr") && getflag(1, "pop_tactics_ralloz") && getflag(1, "pop_sol_ro_arlyxir") && getflag(1, "pop_sol_ro_dresolik") && getflag(1, "pop_sol_ro_jiva") && getflag(1, "pop_sol_ro_rizlona") && getflag(1, "pop_sol_ro_xuzl") && getflag(1, "pop_sol_ro_solusk")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(217) && getflag(2, "pofire")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 10, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoFire']) ); 
 
-if (getzoneflag(216) && getflag(1, "pop_elemental_grand_librarian")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getzoneflag(216) && getflag(2, "zebuxoruk")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 11, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoAirEarthWater']) ); 
 
-if (getflag(1, "pop_time_maelin") && getflag(1, "pop_fire_fennin_projection") && getflag(1, "pop_wind_xegony_projection") && getflag(1, "pop_water_coirnav_projection") && getflag(1, "pop_eartha_arbitor_projection") && getflag(1, "pop_earthb_rathe")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+if (getflag(1, "time")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 12, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTime']) ); 
 
 //PoN B 
 $template->assign_block_vars( "head" , array( 'ID' => 1, 'NAME' => $language['FLAG_PoP_PoNB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_hedge_jezith"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_construct"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "thelin"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "thelin"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
 //Tactics 
 $template->assign_block_vars( "head" , array( 'ID' => 2, 'NAME' => $language['FLAG_PoP_PoTactics']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_dragon"), 'TEXT' => $language['FLAG_PoP_Xana']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_preflag"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_flag"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "poi_door"), 'TEXT' => $language['FLAG_PoP_Xana']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "zeks"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "zeks"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
 //CoD 
+// Technically, Grummus awards two flags; "grummus=1" and "fuirstel=2"
+// grummus is used to SetZoneFlag(200) for access to codecay
+// fuirstel=2 is used to continue the quest line. It seems we could replace grummus with fuirstel=2
 $template->assign_block_vars( "head" , array( 'ID' => 3, 'NAME' => $language['FLAG_PoP_CoD']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_alder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_grimmus_planar_projection"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_elder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "grummus"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
 //Valor & Storms 
 $template->assign_block_vars( "head" , array( 'ID' => 4, 'NAME' => $language['FLAG_PoP_PoSPoV']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_tribunal"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_valor_storms"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
 //HoH A 
 $template->assign_block_vars( "head" , array( 'ID' => 5, 'NAME' => $language['FLAG_PoP_HoHA']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_tribunal"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_valor_storms"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pov_aerin_dar"), 'TEXT' => $language['FLAG_PoP_AD']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
 //BoT 
 $template->assign_block_vars( "head" , array( 'ID' => 6, 'NAME' => $language['FLAG_PoP_BoT']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_tribunal"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_valor_storms"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "pop_pos_askr_the_lost"), 'TEXT' => $language['FLAG_PoP_Askr1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pos_askr_the_lost_final"), 'TEXT' => $language['FLAG_PoP_Askr2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "karana"), 'TEXT' => $language['FLAG_PoP_Askr1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "karana"), 'TEXT' => $language['FLAG_PoP_Askr2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "karana"), 'TEXT' => $language['FLAG_PoP_Askr3']) ); 
 //HoH B 
 $template->assign_block_vars( "head" , array( 'ID' => 7, 'NAME' => $language['FLAG_PoP_HoHB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_tribunal"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_valor_storms"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pov_aerin_dar"), 'TEXT' => $language['FLAG_PoP_AD']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_faye"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_trell"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_garn"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(1, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(2, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(3, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
 //Torment 
 $template->assign_block_vars( "head" , array( 'ID' => 8, 'NAME' => $language['FLAG_PoP_PoTorment']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_alder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_grimmus_planar_projection"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_elder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_hedge_jezith"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_construct"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_ponb_terris"), 'TEXT' => $language['FLAG_PoP_TT']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_ponb_poxbourne"), 'TEXT' => $language['FLAG_PoP_PostTerris']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_preflag"), 'TEXT' => $language['FLAG_PoP_Carpin']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_bertox"), 'TEXT' => $language['FLAG_PoP_Bertox']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_final"), 'TEXT' => $language['FLAG_PoP_PostBertox']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "grummus"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "thelin"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "thelin"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "thelin"), 'TEXT' => $language['FLAG_PoP_TT']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "thelin"), 'TEXT' => $language['FLAG_PoP_PostTerris']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "bertox_key"), 'TEXT' => $language['FLAG_PoP_Carpin']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "fuirstel"), 'TEXT' => $language['FLAG_PoP_Bertox']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(5, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PostBertox']) ); 
 //Sol Ro Tower 
 $template->assign_block_vars( "head" , array( 'ID' => 9, 'NAME' => $language['FLAG_PoP_SolRoTower']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_preflag"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_flag"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_tallon"), 'TEXT' => $language['FLAG_PoP_TZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_vallon"), 'TEXT' => $language['FLAG_PoP_VZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_shadyglade"), 'TEXT' => $language['FLAG_PoP_PreSaryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_newleaf"), 'TEXT' => $language['FLAG_PoP_KoS']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_saryrn_final"), 'TEXT' => $language['FLAG_PoP_PostSaryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hohb_marr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "zeks"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "zeks"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "zeks"), 'TEXT' => $language['FLAG_PoP_VZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "zeks"), 'TEXT' => $language['FLAG_PoP_TZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(6, "zeks"), 'TEXT' => $language['FLAG_PoP_MaelinInfo1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "tylis"), 'TEXT' => $language['FLAG_PoP_PreSaryrn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "tylis"), 'TEXT' => $language['FLAG_PoP_KoS']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mmarr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cipher"), 'TEXT' => $language['FLAG_PoP_Cipher']) ); 
 //Fire 
 $template->assign_block_vars( "head" , array( 'ID' => 10, 'NAME' => $language['FLAG_PoP_PoFire']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_preflag"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poi_behometh_flag"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_tallon"), 'TEXT' => $language['FLAG_PoP_TZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_vallon"), 'TEXT' => $language['FLAG_PoP_VZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_ralloz"), 'TEXT' => $language['FLAG_PoP_RZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_arlyxir"), 'TEXT' => $language['FLAG_PoP_Arlyxir']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_dresolik"), 'TEXT' => $language['FLAG_PoP_Dresolik']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_jiva"), 'TEXT' => $language['FLAG_PoP_Jiva']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_rizlona"), 'TEXT' => $language['FLAG_PoP_Rizlona']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_xuzl"), 'TEXT' => $language['FLAG_PoP_Xusl']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_sol_ro_solusk"), 'TEXT' => $language['FLAG_PoP_SolRo']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hohb_marr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pofire"), 'TEXT' => $language['FLAG_PoP_PreSolRo']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "zeks"), 'TEXT' => $language['FLAG_PoP_PreMB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "zeks"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
+// Vallon Zek is 3, Tallon Zek is 4, both is 5
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "zeks"), 'TEXT' => $language['FLAG_PoP_VZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "zeks"), 'TEXT' => $language['FLAG_PoP_TZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(6, "zeks"), 'TEXT' => $language['FLAG_PoP_MaelinInfo1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(2, "sol_room"), 'TEXT' => $language['FLAG_PoP_Arlyxir']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(3, "sol_room"), 'TEXT' => $language['FLAG_PoP_Dresolik']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(5, "sol_room"), 'TEXT' => $language['FLAG_PoP_Jiva']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(4, "sol_room"), 'TEXT' => $language['FLAG_PoP_Rizlona']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(5, "sol_room"), 'TEXT' => $language['FLAG_PoP_Xusl']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mmarr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cipher"), 'TEXT' => $language['FLAG_PoP_Cipher']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(7, "zeks"), 'TEXT' => $language['FLAG_PoP_RZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "pofire"), 'TEXT' => $language['FLAG_PoP_SolRo']) ); 
 
 //Air/Earth/Water 
 $template->assign_block_vars( "head" , array( 'ID' => 11, 'NAME' => $language['FLAG_PoP_PoAirEarthWater']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_hedge_jezith"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_construct"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_tribunal"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_poj_valor_storms"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_ponb_terris"), 'TEXT' => $language['FLAG_PoP_TT']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_ponb_poxbourne"), 'TEXT' => $language['FLAG_PoP_PostTerris']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_alder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_grimmus_planar_projection"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pod_elder_fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "pop_pos_askr_the_lost"), 'TEXT' => $language['FLAG_PoP_Askr1']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pos_askr_the_lost_final"), 'TEXT' => $language['FLAG_PoP_Askr2']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_bot_agnarr"), 'TEXT' => $language['FLAG_PoP_Agnarr']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pov_aerin_dar"), 'TEXT' => $language['FLAG_PoP_AD']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_faye"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_trell"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hoh_garn"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_hohb_marr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_preflag"), 'TEXT' => $language['FLAG_PoP_Carpin']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_bertox"), 'TEXT' => $language['FLAG_PoP_Bertox']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_cod_final"), 'TEXT' => $language['FLAG_PoP_PostBertox']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_shadyglade"), 'TEXT' => $language['FLAG_PoP_PreSaryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_newleaf"), 'TEXT' => $language['FLAG_PoP_KoS']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pot_saryrn_final"), 'TEXT' => $language['FLAG_PoP_PostSaryrn']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_tactics_ralloz"), 'TEXT' => $language['FLAG_PoP_RZ']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_elemental_grand_librarian"), 'TEXT' => $language['FLAG_PoP_Maelin']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "thelin"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "thelin"), 'TEXT' => $language['FLAG_PoP_Hedge']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mavuin"), 'TEXT' => $language['FLAG_PoP_PreTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "mavuin"), 'TEXT' => $language['FLAG_PoP_Trial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "mavuin"), 'TEXT' => $language['FLAG_PoP_PostTrial']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "thelin"), 'TEXT' => $language['FLAG_PoP_TT']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "thelin"), 'TEXT' => $language['FLAG_PoP_PostTerris']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PreGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "grummus"), 'TEXT' => $language['FLAG_PoP_Grummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PostGrummus']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "karana"), 'TEXT' => $language['FLAG_PoP_Askr1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "karana"), 'TEXT' => $language['FLAG_PoP_Askr2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "karana"), 'TEXT' => $language['FLAG_PoP_Askr3']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "karana"), 'TEXT' => $language['FLAG_PoP_Agnarr']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD1']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(1, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Faye']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(2, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Trell']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflagbit(3, "hohtrials"), 'TEXT' => $language['FLAG_PoP_Garn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "mmarr"), 'TEXT' => $language['FLAG_PoP_MM']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "bertox_key"), 'TEXT' => $language['FLAG_PoP_Carpin']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "fuirstel"), 'TEXT' => $language['FLAG_PoP_Bertox']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(5, "fuirstel"), 'TEXT' => $language['FLAG_PoP_PostBertox']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "tylis"), 'TEXT' => $language['FLAG_PoP_PreSaryrn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "tylis"), 'TEXT' => $language['FLAG_PoP_KoS']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(7, "zeks"), 'TEXT' => $language['FLAG_PoP_RZ']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "zebuxoruk"), 'TEXT' => $language['FLAG_PoP_MaelinLore']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "zebuxoruk"), 'TEXT' => $language['FLAG_PoP_MaelinInfo2']) ); 
 //Time 
 $template->assign_block_vars( "head" , array( 'ID' => 12, 'NAME' => $language['FLAG_PoP_PoTime']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_fire_fennin_projection"), 'TEXT' => $language['FLAG_PoP_Fennin']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_wind_xegony_projection"), 'TEXT' => $language['FLAG_PoP_Xegony']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_water_coirnav_projection"), 'TEXT' => $language['FLAG_PoP_Coirnav']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_eartha_arbitor_projection"), 'TEXT' => $language['FLAG_PoP_Arbitor']) ); 
-$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_earthb_rathe"), 'TEXT' => $language['FLAG_PoP_Rathe']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($fennin_item_id), 'TEXT' => $language['FLAG_PoP_Fennin']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($xegony_item_id), 'TEXT' => $language['FLAG_PoP_Xegony']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($coirnav_item_id), 'TEXT' => $language['FLAG_PoP_Coirnav']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "earthb_key"), 'TEXT' => $language['FLAG_PoP_Arbitor']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($rathe_item_id), 'TEXT' => $language['FLAG_PoP_Rathe']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "time"), 'TEXT' => $language['FLAG_PoP_Time']) ); 
 
 $template->pparse('flags'); 
 
