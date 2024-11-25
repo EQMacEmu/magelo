@@ -247,43 +247,10 @@ function GetItem($item) {
 	if (($item["skillmodtype"]>0) AND ($item["skillmodvalue"]!=0)) { $Output .= $tab."Skill Mod: ".strtolower_ucfirst($dbskills[$item["skillmodtype"]])." ".sign($item["skillmodvalue"])."%<br>\n"; }
 
 	//item proc
-	if (($item["proceffect"]>0) AND ($item["proceffect"]<65535)) {
+	if (($item["proceffect"]>0) AND ($item["proceffect"]<65535) AND ($item["proceffect"]!=$item["worneffect"])) {
 		$Output .= $tab."Effect: <a href='".$spellurl.$item["proceffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
 		$Output .= "&nbsp;(Combat)";
 		$Output .= " <i>(Level ".$item["proclevel2"].")</i>";
-		$Output .= "<br>\n";
-	}
-
-	// worn effect
-	if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='".$spellurl.$item["worneffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
-		$Output .= "&nbsp;(Worn)";
-		$Output .= " <i>(Level ".$item["wornlevel"].")</i>";
-		$Output .= "<br>\n";
-	}
-
-	// focus effect
-	if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
-		$Output .= $tab."Focus: <a href='".$spellurl.$item["focuseffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
-		if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
-		$Output .= "<br>\n";
-	}
-
-	// clicky effect
-	if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {
-		$Output .= $tab."Effect: <a href='".$spellurl.$item["clickeffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
-		$Output .= "&nbsp;(";
-		if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
-		if ($item["clicktype"]==4) { $Output .= "Must Equip, ";	}
-		if ($item["clicktype"]==5) { $Output .= "Any Slot/Can Equip, "; }
-		$Output .= "Casting Time: ";
-		if ($item["casttime"]>0) {
-			$casttime = sprintf("%.1f",$item["casttime"]/1000);
-			$Output .= $casttime;
-		}
-		else  { $Output .= "Instant"; }
-		$Output .= ")";
-		$Output .= " <i>(Level ".$item["clicklevel"].")</i>";
 		$Output .= "<br>\n";
 	}
 
@@ -314,6 +281,9 @@ function GetItem($item) {
 	if($item["heroic_int"] != 0) $Stats .= " " . $item["heroic_int"] ;
 	if($item[ "acha"] != 0)  $Stats        .= " CHA: "            . $item ["acha"];
 	if($item["heroic_cha"] != 0) $Stats .= " " . $item["heroic_cha"] ;
+	if($item[   "hp"] != 0)  $Stats .= " HP: "            .sign($item   ["hp"]);
+	if($item[ "mana"] != 0)  $Stats .= " MANA: "          .sign($item ["mana"]);
+	if($item["endur"] != 0)  $Stats .= " Endurance: "     .sign($item["endur"]);
 	//replace block END 2/25/2014
 	if($Stats != "") { $Output .= $tab.$Stats."<br>\n"; }
 
@@ -335,9 +305,6 @@ function GetItem($item) {
 	if($item["heroic_mr"] != 0) $Stats .= " " . $item["heroic_mr"];
 	if($item[   "pr"] != 0)  $Stats .= " Poison: "         . $item["pr"];
 	if($item["heroic_pr"] != 0) $Stats .= " " . $item["heroic_pr"];
-	if($item[   "hp"] != 0)  $Stats .= " HP: "            .sign($item   ["hp"]);
-	if($item[ "mana"] != 0)  $Stats .= " MANA: "          .sign($item ["mana"]);
-	if($item["endur"] != 0)  $Stats .= " Endurance: "     .sign($item["endur"]);
 	//replaced block END 2/25/2014
 	if($Stats != "") { $Output .= $tab.$Stats."<br>\n"; }
 
@@ -374,6 +341,39 @@ function GetItem($item) {
 	//recomended level
 	if ($item["reclevel"]>0) {
 		$Output .= $tab."Recommended level of ".$item["reclevel"].".<br>\n";
+	}
+
+	// worn effect
+	if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["worneffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
+		$Output .= "&nbsp;(Worn)";
+		$Output .= " <i>(Level ".$item["wornlevel"].")</i>";
+		$Output .= "<br>\n";
+	}
+
+	// focus effect
+	if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
+		$Output .= $tab."Focus: <a href='".$spellurl.$item["focuseffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
+		if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
+		$Output .= "<br>\n";
+	}
+
+	// clicky effect
+	if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {
+		$Output .= $tab."Effect: <a href='".$spellurl.$item["clickeffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
+		$Output .= "&nbsp;(";
+		if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
+		if ($item["clicktype"]==4) { $Output .= "Must Equip, ";	}
+		if ($item["clicktype"]==5) { $Output .= "Any Slot/Can Equip, "; }
+		$Output .= "Casting Time: ";
+		if ($item["casttime"]>0) {
+			$casttime = sprintf("%.1f",$item["casttime"]/1000);
+			$Output .= $casttime;
+		}
+		else  { $Output .= "Instant"; }
+		$Output .= ")";
+		$Output .= " <i>(Level ".$item["clicklevel"].")</i>";
+		$Output .= "<br>\n";
 	}
 
 	// Weight
