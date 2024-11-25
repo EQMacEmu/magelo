@@ -71,33 +71,37 @@ function getslots($val)
 }
 
 function getraces($val) {
-	if ($val==0)
-		return "NONE";
 	global $dbraces;
-	reset($dbraces);
-	do {
-		$key=key($dbraces);
-		if ($key<=$val) {
-			$val-=$key;
-			$res=current($dbraces).$v.$res;
-			$v=" "; }
-	} while (next($dbraces));
-	return $res;
+	$all_races = 14;
+	if ($val == (2**$all_races) - 1) {
+		return $dbraces[$all_races];
+	} else if ($val == 0 ) {
+		return "None";
+	}
+	$Result = array();
+	for ($race = 0; $race < $all_races; $race++) {
+		if ($val & (2**$race)) {
+			array_push($Result, $dbraces[$race]);
+		}
+	}
+	return implode(" ", $Result);
 }
 
 function getclasses($val) {
-	if ($val==0)
-		return "NONE";
 	global $dbiclasses;
-	reset($dbiclasses);
-	do {
-		$key=key($dbiclasses);
-		if ($key<=$val) {
-			$val-=$key;
-			$res=current($dbiclasses).$v.$res;
-			$v=" "; }
-	} while (next($dbiclasses));
-	return $res;
+	$all_classes = 15;
+	if ($val == (2**$all_classes) - 1) {
+		return $dbiclasses[$all_classes];
+	} else if ($val == 0 ) {
+		return "None";
+	}
+	$Result = array();
+	for ($class = 0; $class < $all_classes; $class++) {
+		if ($val & (2**$class)) {
+			array_push($Result, $dbiclasses[$class]);
+		}
+	}
+	return implode(" ", $Result);
 }
 
 function getdeities($val) {
@@ -159,15 +163,16 @@ function GetItem($item) {
 	$spaceswitch= "";
 	if($item["itemtype"] == 54)  { $Output .= "$spaceswitch AUGMENTATION"; $spaceswitch= " "; }
 	if($item["magic"] == 1)      { $Output .= "$spaceswitch MAGIC ITEM";   $spaceswitch= " "; }
-	if($item["loregroup"] == -1 || strpos($item["Name"], "*"))   { $Output .= "$spaceswitch LORE ITEM";    $spaceswitch= " "; }
+	$i = 0;
+	if($item["lore"][$i] == "*")   { $i++; $Output .= "$spaceswitch LORE ITEM";    $spaceswitch= " "; }
+	if($item["lore"][$i] == "#")   { $Output .= "$spaceswitch ARTIFACT";    $spaceswitch= " "; }
 	if($item["nodrop"] == 0)     { $Output .= "$spaceswitch NO TRADE";       $spaceswitch= " "; }
 	if($item["norent"] == 0)     { $Output .= "$spaceswitch NO RENT";       $spaceswitch= " "; }
 	$Output .= "<br>\n";
 
 	//EXPENDABLE, Charges
 	if($item["clicktype"] == 3) { $Output .= $tab."EXPENDABLE "; }
-	//if($item["clicktype"]>0 && $item["maxcharges"]>0) { $Output .= "Charges: ".$item["maxcharges"]."<br>\n"; } //replaced maxcharges logic 2/25/2014
-	if($item["clicktype"]>0 && $item["maxcharges"]!=0) { $Output .= "Charges: ".(($item["maxcharges"]>0) ? $item["maxcharges"]: "Infinite")."<br>\n"; }
+	if($item["clicktype"]>0 && $item["maxcharges"]>0) { $Output .= "Charges: ".$item["maxcharges"]."<br>\n"; }
 	// Augmentation type
 	if($item["itemtype"] == 54) {
 		//if($item["augtype"] > 0) { $Output .= $tab."Augmentation type: ".$item["augtype"]."<br>\n"; }            //removed 2/25/2014

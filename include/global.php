@@ -47,47 +47,44 @@ $dbelements=array("Unknown","Magic","Fire","Cold","Poison","Disease");
 $guildranks=array("Member", "Officer", "Leader");
 
 // ItemClasses 2^(class-1)
-$dbiclasses=array();
-$dbiclasses[65535]="ALL";
-$dbiclasses[32768]="BER";
-$dbiclasses[16384]="BST";
-$dbiclasses[8192]="ENC";
-$dbiclasses[4096]="MAG";
-$dbiclasses[2048]="WIZ";
-$dbiclasses[1024]="NEC";
-$dbiclasses[512]="SHM";
-$dbiclasses[256]="ROG";
-$dbiclasses[128]="BRD";
-$dbiclasses[64]="MNK";
-$dbiclasses[32]="DRU";
-$dbiclasses[16]="SHD";
-$dbiclasses[8]="RNG";
-$dbiclasses[4]="PAL";
-$dbiclasses[2]="CLR";
-$dbiclasses[1]="WAR";
+$dbiclasses = array();
+$dbiclasses[15] = "ALL";
+$dbiclasses[14] = "BST";
+$dbiclasses[13] = "ENC";
+$dbiclasses[12] = "MAG";
+$dbiclasses[11] = "WIZ";
+$dbiclasses[10] = "NEC";
+$dbiclasses[9] = "SHM";
+$dbiclasses[8] = "ROG";
+$dbiclasses[7] = "BRD";
+$dbiclasses[6] = "MNK";
+$dbiclasses[5] = "DRU";
+$dbiclasses[4] = "SHD";
+$dbiclasses[3] = "RNG";
+$dbiclasses[2] = "PAL";
+$dbiclasses[1] = "CLR";
+$dbiclasses[0] = "WAR";
 
 
 
 
 // races
-$dbraces=array();
-$dbraces[65535]="ALL";
-$dbraces[32768]="DRK";
-$dbraces[16384]="FRG";
-$dbraces[8192]="VAH";
-$dbraces[4096]="IKS";
-$dbraces[2048]="GNM";
-$dbraces[1024]="HFL";
-$dbraces[512]="OGR";
-$dbraces[256]="TRL";
-$dbraces[128]="DWF";
-$dbraces[64]="HEF";
-$dbraces[32]="DEF";
-$dbraces[16]="HIE";
-$dbraces[8]="ELF";
-$dbraces[4]="ERU";
-$dbraces[2]="BAR";
-$dbraces[1]="HUM";
+$dbraces = array();
+$dbraces[14] = "ALL";
+$dbraces[13] = "VAH";
+$dbraces[12] = "IKS";
+$dbraces[11] = "GNM";
+$dbraces[10] = "HFL";
+$dbraces[9] = "OGR";
+$dbraces[8] = "TRL";
+$dbraces[7] = "DWF";
+$dbraces[6] = "HEF";
+$dbraces[5] = "DEF";
+$dbraces[4] = "HIE";
+$dbraces[3] = "ELF";
+$dbraces[2] = "ERU";
+$dbraces[1] = "BAR";
+$dbraces[0] = "HUM";
 
 // skills
 $dbskills=array();
