@@ -48,7 +48,7 @@ if ($mypermission['keys'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],
 //============================= 
 //grab the keys the user has
 //============================= 
-$query = "SELECT k.item_id, i.Name AS 'key' FROM keyring AS k LEFT JOIN items AS i ON i.id = k.item_id WHERE char_id =  $charID ORDER BY i.Name;";
+$query = "SELECT k.item_id, i.Name AS 'key' FROM character_keyring AS k LEFT JOIN items AS i ON i.id = k.item_id WHERE k.id = $charID ORDER BY i.Name;";
 if (defined('DB_PERFORMANCE')) dbp_query_stat('query', $query); //added 9/28/2014
 $results = $game_db->query($query);
 if (!numRows($results)) message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
