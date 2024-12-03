@@ -405,6 +405,19 @@ function GetItem($item) {
 		$Output .= $tab."Effect: <a href='".$spellurl.$item["scrolleffect"]."' target='_blank'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
 		$Output .= "<br>\n";
 	}
+
+	if ($item["color"] > 0) {
+		$color = $item["color"];
+		$r = ($color & (0xff<<16))>>16;
+		$g = ($color & (0xff<<8))>>8;
+		$b = $color & (0xff);
+		$hexprint = sprintf('%d, %d, %d', $r, $g, $b);
+		$Output .= "Tint: ($hexprint)<br>\n";
+	}
+
+	if ($item["light"] > 0) {
+		$Output .= "Light: " . $item["light"] . "<br>\n";
+	}
 	//admindebug($item);
 	return $Output;
 }
