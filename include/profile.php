@@ -19,9 +19,9 @@
  *       was added instead.
  ***************************************************************************/
 
-include_once("../include/config.php");
-include_once("../include/debug.php");
-include_once("../include/sql.php");
+include_once("include/config.php");
+include_once("include/debug.php");
+include_once("include/sql.php");
 
 global $game_db;
 

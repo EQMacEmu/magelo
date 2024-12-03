@@ -43,7 +43,7 @@ else $charName = $_GET['char'];
 $char = new profile($charName); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->char_id());
+$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
 if (!$mypermission['factions'] && !isAdmin()) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
