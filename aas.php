@@ -121,6 +121,7 @@ foreach ($aatabs as $key => $value) {
 }
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "&tlp=1" : "",
   'NAME' => $name,
   'AA_POINTS' => $char->GetValue("aa_points"), //added underscore 9/26/2014
   'POINTS_SPENT' => $SpentAA,

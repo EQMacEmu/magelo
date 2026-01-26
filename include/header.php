@@ -29,6 +29,7 @@ $template->set_filenames(array(
 );
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "checked" : "",
   'TITLE' => $mytitle,
   'SUBTITLE' => $d_title,
   'VERSION' => $version,

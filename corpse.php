@@ -62,6 +62,7 @@ $template->set_filenames(array(
 );
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "&tlp=1" : "",
   'NAME' => $name,
 
   'L_REZZED' => $language['CORPSE_REZZED'],

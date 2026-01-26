@@ -10,6 +10,7 @@
 
   <div style='float:right;' align='center'>  
     <form method='GET' action='search.php'>
+      TLP: <input class="search" type="checkbox" name="tlp" {TLP}>
       {L_NAME}: <input class='search' type='text' name='name' >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       {L_GUILD}: <input class='search' type='text' name='guild' >&nbsp;&nbsp;&nbsp;&nbsp;
       <input style='vertical-align:middle' type='image' src='images/go.gif'>

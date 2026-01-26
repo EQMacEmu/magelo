@@ -51,16 +51,15 @@ if (!$mypermission['factions'] && !isAdmin()) message_die($language['MESSAGE_ERR
 //converts faction values into a the string from the language file.
 function FactionToString($character_value) {
 	global $language;
-	if($character_value >=  1101) return $language['FACTION_ALLY'];
-	if($character_value >=   701 && $character_value <= 1100) return $language['FACTION_WARMLY'];
-	if($character_value >=   401 && $character_value <=  700) return $language['FACTION_KINDLY'];
-	if($character_value >=   101 && $character_value <=  400) return $language['FACTION_AMIABLE'];
-	if($character_value >=     0 && $character_value <=  100) return $language['FACTION_INDIFF'];
-	if($character_value >=  -100 && $character_value <=   -1) return $language['FACTION_APPR'];
-	if($character_value >=  -700 && $character_value <= -101) return $language['FACTION_DUBIOUS'];
-	if($character_value >=  -999 && $character_value <= -701) return $language['FACTION_THREAT'];
-	if($character_value <= -1000) return $language['FACTION_SCOWLS'];
-	return $language['FACTION_INDIFF'];
+	if($character_value >=  1100) return $language['FACTION_ALLY'];
+	if($character_value >=   750) return $language['FACTION_WARMLY'];
+	if($character_value >=   500) return $language['FACTION_KINDLY'];
+	if($character_value >=   100) return $language['FACTION_AMIABLE'];
+	if($character_value >=     0) return $language['FACTION_INDIFF'];
+	if($character_value >=  -100) return $language['FACTION_APPR'];
+	if($character_value >=  -500) return $language['FACTION_DUBIOUS'];
+	if($character_value >=  -750) return $language['FACTION_THREAT'];
+	return $language['FACTION_SCOWLS'];
 }
 
 //gather all the data from the database first
@@ -112,6 +111,7 @@ else {
 }
 
 $template->assign_vars(array(  
+	'TLP'         => $tlp ? "&tlp=1" : "",
 	'NAME'        => $name,
 
 	'L_FACTIONS'  => $language['FACTION_FACTIONS'],

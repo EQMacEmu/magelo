@@ -357,7 +357,7 @@ INPUT.search {
 /* ----------------------------------------------
           Inventory window stylesheets
 ------------------------------------------------- */
-.IventoryOuterGM {
+.InventoryOuterGM {
   position: relative;	
   background-image: url(../images/lightgm.jpg);
   width: 430px;
@@ -370,7 +370,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryOuter {
+.InventoryOuter {
   position: relative;	
   background-image: url(../images/light.gif);
   width: 430px;
@@ -398,7 +398,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryTitle {
+.InventoryTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -410,7 +410,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryTitleLeft {
+.InventoryTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -420,7 +420,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.IventoryTitleMid {
+.InventoryTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -432,7 +432,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.IventoryTitleRight {
+.InventoryTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;

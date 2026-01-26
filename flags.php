@@ -122,7 +122,7 @@ function getflag($condition, $flagname) {
 function getflagbit($bit, $flagname) {
     global $quest_globals;    
     if (!array_key_exists($flagname,$quest_globals)) return 0; 
-    if (substr($quest_globals[$flagname], 2, 1) != "1") return 0; 
+    if (substr($quest_globals[$flagname], $bit - 1, 1) != "1") return 0; 
     return 1; 
 }
 
@@ -156,6 +156,7 @@ $template->set_filenames(array(
 );
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "&tlp=1" : "",
   'NAME' => $name, 
 
   'L_DONE' => $language['BUTTON_DONE'], 
@@ -217,6 +218,9 @@ $template->assign_block_vars( "mainhead.main" , array( 'ID' => 11, 'FLAG' => $Ha
 
 if (getflag(1, "time")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_block_vars( "mainhead.main" , array( 'ID' => 12, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTime']) ); 
+
+if (getflag(1, "time")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+$template->assign_block_vars( "mainhead.main" , array( 'ID' => 13, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_Checklist']) ); 
 
 //PoN B 
 $template->assign_block_vars( "head" , array( 'ID' => 1, 'NAME' => $language['FLAG_PoP_PoNB']) ); 
@@ -342,6 +346,24 @@ $template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($coirnav_
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "earthb_key"), 'TEXT' => $language['FLAG_PoP_Arbitor']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => timeitem($rathe_item_id), 'TEXT' => $language['FLAG_PoP_Rathe']) ); 
 $template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "time"), 'TEXT' => $language['FLAG_PoP_Time']) ); 
+//Checklist
+$template->assign_block_vars( "head" , array( 'ID' => 13, 'NAME' => $language['FLAG_PoP_Checklist']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_grummus"), 'TEXT' => $language['FLAG_PoP_Grummus']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_maze"), 'TEXT' => $language['FLAG_PoP_Hedge']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_behemoth"), 'TEXT' => $language['FLAG_PoP_MB']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_aerindar"), 'TEXT' => $language['FLAG_PoP_AD2']) ); 
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_terris"), 'TEXT' => $language['FLAG_PoP_TT']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_bertox"), 'TEXT' => $language['FLAG_PoP_Bertox']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_keeper"), 'TEXT' => $language['FLAG_PoP_KoS']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_saryrn"), 'TEXT' => $language['FLAG_PoP_Saryrn']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_vallon"), 'TEXT' => $language['FLAG_PoP_VZ']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_tallon"), 'TEXT' => $language['FLAG_PoP_TZ']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_rallos"), 'TEXT' => $language['FLAG_PoP_RZ']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_karana"), 'TEXT' => $language['FLAG_PoP_Agnarr']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_mmarr"), 'TEXT' => $language['FLAG_PoP_MM']) );
+// You get mmarr and mmarr_book at the same time.
+//$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_mmarr_book"), 'TEXT' => $language['FLAG_PoP_MM']) );
+$template->assign_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "cl_solusek"), 'TEXT' => $language['FLAG_PoP_SolRo']) );
 
 $template->pparse('flags'); 
 

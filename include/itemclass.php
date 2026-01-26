@@ -78,148 +78,33 @@ class item {
            $this->myicon=$row['icon']; 
            $this->myname=$row['Name']; 
            $this->myid=$row['id']; 
-           //switch ($this->myslot){                                                         //removed line 2/9/2014 
-           switch (true){                                                                    //added line 2/9/2014
-                //case ($this->myslot >= 0 && $this->myslot <= 21):                          //removed line 2/5/2014
-                case ($this->myslot >= 0 && $this->myslot <= 21 || $this->myslot == 9999):   //added line 2/5/2014
+           switch (true){
+		// Equipment Slots
+                case ($this->myslot >= 0 && $this->myslot <= 21 || $this->myslot == 9999):
                      $this->mytype = 1; 
                      $this->myvslot = $this->myslot; 
                      break; 
+		// Inventory Slots
                 case ($this->myslot >= 22 && $this->myslot <= 29): 
                      $this->mytype = 2; 
                      $this->myvslot = $this->myslot; 
                      break; 
-                case ($this->myslot >= 251 && $this->myslot <= 260): 
-                     $this->mytype = 22; 
-                     $this->myvslot = $this->myslot - 250; 
+		// Inventory Bag Slot
+                case ($this->myslot > 249 && $this->myslot < 330): 
+		     $base = intval($this->myslot / 10);
+                     $this->mytype = $base - 3; // Which Bag?
+                     $this->myvslot = $this->myslot - ($base * 10 - 1); // Which Bag Slot?
                      break; 
-                case ($this->myslot >= 261 && $this->myslot <= 270): 
-                     $this->mytype = 23; 
-                     $this->myvslot = $this->myslot - 260; 
-                     break; 
-                case ($this->myslot >= 271 && $this->myslot <= 280): 
-                     $this->mytype = 24; 
-                     $this->myvslot = $this->myslot - 270; 
-                     break; 
-                case ($this->myslot >= 281 && $this->myslot <= 290): 
-                     $this->mytype = 25; 
-                     $this->myvslot = $this->myslot - 280; 
-                     break; 
-                case ($this->myslot >= 291 && $this->myslot <= 300): 
-                     $this->mytype = 26; 
-                     $this->myvslot = $this->myslot - 290; 
-                     break; 
-                case ($this->myslot >= 301 && $this->myslot <= 310): 
-                     $this->mytype = 27; 
-                     $this->myvslot = $this->myslot - 300; 
-                     break; 
-                case ($this->myslot >= 311 && $this->myslot <= 320): 
-                     $this->mytype = 28; 
-                     $this->myvslot = $this->myslot - 310; 
-                     break; 
-                case ($this->myslot >= 321 && $this->myslot <= 330): 
-                     $this->mytype = 29; 
-                     $this->myvslot = $this->myslot - 320; 
-                     break; 
+		// Bank Slots
                 case ($this->myslot >= 2000 && $this->myslot <= 2023): 
                      $this->mytype = 3; 
                      $this->myvslot = $this->myslot; 
                      break; 
-                case ($this->myslot >= 2031 && $this->myslot <= 2040): 
-                     $this->mytype = 2000; 
-                     $this->myvslot = $this->myslot - 2030; 
-                     break; 
-                case ($this->myslot >= 2041 && $this->myslot <= 2050): 
-                     $this->mytype = 2001; 
-                     $this->myvslot = $this->myslot - 2040; 
-                     break; 
-                case ($this->myslot >= 2051 && $this->myslot <= 2060): 
-                     $this->mytype = 2002; 
-                     $this->myvslot = $this->myslot - 2050; 
-                     break; 
-                case ($this->myslot >= 2061 && $this->myslot <= 2070): 
-                     $this->mytype = 2003; 
-                     $this->myvslot = $this->myslot - 2060; 
-                     break; 
-                case ($this->myslot >= 2071 && $this->myslot <= 2080): 
-                     $this->mytype = 2004; 
-                     $this->myvslot = $this->myslot - 2070; 
-                     break; 
-                case ($this->myslot >= 2081 && $this->myslot <= 2090): 
-                     $this->mytype = 2005; 
-                     $this->myvslot = $this->myslot - 2080; 
-                     break; 
-                case ($this->myslot >= 2091 && $this->myslot <= 2100): 
-                     $this->mytype = 2006; 
-                     $this->myvslot = $this->myslot - 2090; 
-                     break; 
-                case ($this->myslot >= 2101 && $this->myslot <= 2110): 
-                     $this->mytype = 2007; 
-                     $this->myvslot = $this->myslot - 2100; 
-                     break; 
-                case ($this->myslot >= 2111 && $this->myslot <= 2120): 
-                     $this->mytype = 2008; 
-                     $this->myvslot = $this->myslot - 2110; 
-                     break; 
-                case ($this->myslot >= 2121 && $this->myslot <= 2130): 
-                     $this->mytype = 2009; 
-                     $this->myvslot = $this->myslot - 2120; 
-                     break; 
-                case ($this->myslot >= 2131 && $this->myslot <= 2140): 
-                     $this->mytype = 2010; 
-                     $this->myvslot = $this->myslot - 2130; 
-                     break; 
-                case ($this->myslot >= 2141 && $this->myslot <= 2150): 
-                     $this->mytype = 2011; 
-                     $this->myvslot = $this->myslot - 2140; 
-                     break; 
-                case ($this->myslot >= 2151 && $this->myslot <= 2160): 
-                     $this->mytype = 2012; 
-                     $this->myvslot = $this->myslot - 2150; 
-                     break; 
-                case ($this->myslot >= 2161 && $this->myslot <= 2170): 
-                     $this->mytype = 2013; 
-                     $this->myvslot = $this->myslot - 2160; 
-                     break; 
-                case ($this->myslot >= 2171 && $this->myslot <= 2180): 
-                     $this->mytype = 2014; 
-                     $this->myvslot = $this->myslot - 2170; 
-                     break; 
-                case ($this->myslot >= 2181 && $this->myslot <= 2190): 
-                     $this->mytype = 2015; 
-                     $this->myvslot = $this->myslot - 2180; 
-                     break; 
-                case ($this->myslot >= 2191 && $this->myslot <= 2200): 
-                     $this->mytype = 2016; 
-                     $this->myvslot = $this->myslot - 2190; 
-                     break; 
-                case ($this->myslot >= 2201 && $this->myslot <= 2210): 
-                     $this->mytype = 2017; 
-                     $this->myvslot = $this->myslot - 2200; 
-                     break; 
-                case ($this->myslot >= 2211 && $this->myslot <= 2220): 
-                     $this->mytype = 2018; 
-                     $this->myvslot = $this->myslot - 2210; 
-                     break; 
-                case ($this->myslot >= 2221 && $this->myslot <= 2230): 
-                     $this->mytype = 2019; 
-                     $this->myvslot = $this->myslot - 2220; 
-                     break; 
-                case ($this->myslot >= 2231 && $this->myslot <= 2240): 
-                     $this->mytype = 2020; 
-                     $this->myvslot = $this->myslot - 2230; 
-                     break; 
-                case ($this->myslot >= 2241 && $this->myslot <= 2250): 
-                     $this->mytype = 2021; 
-                     $this->myvslot = $this->myslot - 2240; 
-                     break; 
-                case ($this->myslot >= 2251 && $this->myslot <= 2260): 
-                     $this->mytype = 2022; 
-                     $this->myvslot = $this->myslot - 2250; 
-                     break; 
-                case ($this->myslot >= 2261 && $this->myslot <= 2270): 
-                     $this->mytype = 2023; 
-                     $this->myvslot = $this->myslot - 2260; 
+		// Bank Bag Slot
+                case (true && $this->myslot > 2029 && $this->myslot < 2270): 
+		     $base = intval(($this->myslot - 2030) / 10);
+                     $this->mytype = 2000 + $base; // Which Bag?
+                     $this->myvslot = $this->myslot - ($base * 10 + 2030 - 1); // Which Bag Slot?
                      break; 
                 default: 
                      $this->mytype = 0; 

@@ -61,6 +61,7 @@ $template->set_filenames(array(
 );
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "&tlp=1" : "",
   'NAME' => $name,
   '1H_BLUNT' => $char->GetValue('1h_blunt'), //TODO all these are in multi row tables now, needs updates
   '1H_SLASHING' => $char->GetValue('1h_slashing'), 

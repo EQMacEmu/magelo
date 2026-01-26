@@ -14,13 +14,13 @@ function display(type, id, prefix) {
 <div class='NavOuter'> 
 <div class='NavInner'> 
   <div class='FreeButton' style="color:#606060;margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' onclick="window.location='aas.php?char={FIRST_NAME}';" style="margin:3px">{L_AAS}</div> 
-  <div class='FreeButton' onclick="window.location='keys.php?char={FIRST_NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='flags.php?char={FIRST_NAME}';" style="margin:3px">{L_FLAGS}</div> 
-  <div class='FreeButton' onclick="window.location='skills.php?char={FIRST_NAME}';" style="margin:3px">{L_SKILLS}</div> 
-  <div class='FreeButton' onclick="window.location='corpse.php?char={FIRST_NAME}';" style="margin:3px">{L_CORPSE}</div> 
-  <div class='FreeButton' onclick="window.location='factions.php?char={FIRST_NAME}';" style="margin:3px">{L_FACTION}</div> 
-  <div class='FreeButton' onclick="window.location='charmove.php?char={FIRST_NAME}';" style="margin:3px">{L_CHARMOVE}</div> 
+  <div class='FreeButton' onclick="window.location='aas.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_AAS}</div> 
+  <div class='FreeButton' onclick="window.location='keys.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_KEYS}</div>
+  <div class='FreeButton' onclick="window.location='flags.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_FLAGS}</div> 
+  <div class='FreeButton' onclick="window.location='skills.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_SKILLS}</div> 
+  <div class='FreeButton' onclick="window.location='corpse.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_CORPSE}</div> 
+  <div class='FreeButton' onclick="window.location='factions.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_FACTION}</div> 
+  <div class='FreeButton' onclick="window.location='charmove.php?char={FIRST_NAME}{TLP}';" style="margin:3px">{L_CHARMOVE}</div> 
   <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div> 
 </div> 
 </div> 
@@ -40,7 +40,7 @@ function display(type, id, prefix) {
         <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
         <!-- END bagslots --> 
         <!-- BEGIN bagitems --> 
-        <div onclick="display(0, {bags.bagitems.BI_SLOT}, 'slot');" class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url(images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
+        <div onmouseover="display(0, {bags.bagitems.BI_SLOT}, 'slot');" class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url(images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
         <!-- END bagitems --> 
 
         <div class='Button bagbuttonrow{bags.ROWS}' onclick="document.getElementById('bag{bags.SLOT}').style.display = 'none';">{L_DONE}</div> 
@@ -48,11 +48,11 @@ function display(type, id, prefix) {
       <!-- END bags --> 
     </td> 
     <td width='460px' align='center'> 
-      <div class='IventoryOuter{HIGHLIGHT_GM}'> 
-        <div class='IventoryTitle'> 
-          <div class='IventoryTitleLeft'></div> 
-          <div class='IventoryTitleMid'>{L_HEADER_INVENTORY}</div> 
-          <div class='IventoryTitleRight'></div> 
+      <div class='InventoryOuter{HIGHLIGHT_GM}'> 
+        <div class='InventoryTitle'> 
+          <div class='InventoryTitleLeft'></div> 
+          <div class='InventoryTitleMid'>{L_HEADER_INVENTORY}</div> 
+          <div class='InventoryTitleRight'></div> 
         </div> 
         <div class='InventoryInner'> 
         
@@ -61,7 +61,7 @@ function display(type, id, prefix) {
               <tr> 
                 <td nowrap> 
                   {L_REGEN}<br>{L_FT}<br>{L_ATK}<br>{L_DS}<br>{L_HASTE}
-                </td> 
+                </td>
                 <td>{REGEN} / {REGEN_cap}<br>{FT} / {FT_cap}<br>{ATK_item} / {ATK_item_cap}<br>{DS}<br>{HASTE}%
                 </td> 
               </tr> 
@@ -126,6 +126,11 @@ function display(type, id, prefix) {
                 <td>{L_WEIGHT}</td> 
                 <td nowrap>{WEIGHT} / {STR}</td> 
               </tr> 
+              <tr><td class='Divider' colspan='2'></td></tr> 
+	      <tr>
+	      	<td>Worn<br>Shield<br>Avoidance<br>Mitigation</td>
+	      	<td>{AC_WORN}<br>{AC_SHIELD}<br>{AC_AVOIDANCE}<br>{AC_MITIGATION}</td>
+	      </tr>
             </table> 
           </div>  
 
@@ -208,7 +213,7 @@ function display(type, id, prefix) {
         <div class='Slot slotloc2023 slotimage'></div> 
 
         <!-- BEGIN bankitem --> 
-        <div onclick="display(0, {bankitem.SLOT}, 'slot'); if ({bankitem.ISBAG}) display(0, {bankitem.SLOT}, 'bag');" class='Slot slotloc{bankitem.SLOT}' style='background-image: url(images/items/item_{bankitem.ICON}.png);'></div> 
+        <div onmouseover="display(0, {bankitem.SLOT}, 'slot'); if ({bankitem.ISBAG}) display(0, {bankitem.SLOT}, 'bag');" class='Slot slotloc{bankitem.SLOT}' style='background-image: url(images/items/item_{bankitem.ICON}.png);'></div> 
         <!-- END bankitem --> 
         
 

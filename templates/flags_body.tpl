@@ -11,14 +11,14 @@ function display(type, id, prefix) {
 
 <div class='NavOuter'>
 <div class='NavInner'>
-  <div class='FreeButton' onclick="window.location='character.php?char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' onclick="window.location='aas.php?char={NAME}';" style="margin:3px">{L_AAS}</div>
-  <div class='FreeButton' onclick="window.location='keys.php?char={NAME}';" style="margin:3px">{L_KEYS}</div>
+  <div class='FreeButton' onclick="window.location='character.php?char={NAME}{TLP}';" style="margin:3px">{L_INVENTORY}</div>
+  <div class='FreeButton' onclick="window.location='aas.php?char={NAME}{TLP}';" style="margin:3px">{L_AAS}</div>
+  <div class='FreeButton' onclick="window.location='keys.php?char={NAME}{TLP}';" style="margin:3px">{L_KEYS}</div>
   <div class='FreeButton' style="color:606060;margin:3px">{L_FLAGS}</div>
-  <div class='FreeButton' onclick="window.location='skills.php?char={NAME}';" style="margin:3px">{L_SKILLS}</div>
-  <div class='FreeButton' onclick="window.location='corpse.php?char={NAME}';" style="margin:3px">{L_CORPSE}</div>
-  <div class='FreeButton' onclick="window.location='factions.php?char={NAME}';" style="margin:3px">{L_FACTION}</div>
-  <div class='FreeButton' onclick="window.location='charmove.php?char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
+  <div class='FreeButton' onclick="window.location='skills.php?char={NAME}{TLP}';" style="margin:3px">{L_SKILLS}</div>
+  <div class='FreeButton' onclick="window.location='corpse.php?char={NAME}{TLP}';" style="margin:3px">{L_CORPSE}</div>
+  <div class='FreeButton' onclick="window.location='factions.php?char={NAME}{TLP}';" style="margin:3px">{L_FACTION}</div>
+  <div class='FreeButton' onclick="window.location='charmove.php?char={NAME}{TLP}';" style="margin:3px">{L_CHARMOVE}</div>
   <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div>
 </div>
 </div>
@@ -46,7 +46,7 @@ function display(type, id, prefix) {
 	      <td colspan='2'>&nbsp;</td>
 	    </tr>
 	    <!-- END mainhead -->
-	    <tr><td colspan='2' align='center'><div class='FreeButton' onclick="window.location='character.php?char={NAME}';">{L_DONE}</div></td></tr>
+	    <tr><td colspan='2' align='center'><div class='FreeButton' onclick="window.location='character.php?char={NAME}{TLP}';">{L_DONE}</div></td></tr>
 	  </table>
 	</div>
       </div>

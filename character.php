@@ -199,7 +199,7 @@ if(numRows($results) != 0)
 
 //load guild name
 //rewritten because the guild id was removed from the profile 9/26/2014
-$query = "SELECT guilds.name, guild_members.rank 
+$query = "SELECT guilds.name, guild_members.rank, guild_members.banker
           FROM guilds
           JOIN guild_members
           ON guilds.id = guild_members.guild_id
@@ -212,6 +212,11 @@ if(numRows($results) != 0)
   $row = fetchRows($results);
   $guild_name = $row[0]['name'];
   $guild_rank = $guildranks[$row[0]['rank']];
+  $guild_banker = $row[0]['banker'];
+  if ($guild_banker ) {
+    $mypermission['bags'] = 0;
+    $mypermission['bank'] = 0;
+  }
 }
 
 // place where all the items stats are added up
@@ -249,6 +254,7 @@ $template->set_filenames(array(
 );
 
 $template->assign_vars(array(  
+  'TLP' => $tlp ? "&tlp=1" : "",
   'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
   'REGEN' => $character_magelo_stats['hp_regen_item'],
   'REGEN_cap' => $character_magelo_stats['hp_regen_item_cap'],
@@ -270,6 +276,10 @@ $template->assign_vars(array(
   'HP' => $character_magelo_stats['hp_max_total'],
   'MANA' => $character_magelo_stats['mana_max_total'],
   'AC' => $character_magelo_stats['ac_total'],
+  'AC_AVOIDANCE' => $character_magelo_stats['ac_avoidance'],
+  'AC_MITIGATION' => $character_magelo_stats['ac_mitigation'],
+  'AC_WORN' => $character_magelo_stats['ac_item'],
+  'AC_SHIELD' => $character_magelo_stats['ac_shield'],
   'ATK' => $character_magelo_stats['atk_total'],
   'STR' => $character_magelo_stats['STR_total'],
   'STA' => $character_magelo_stats['STA_total'],
@@ -378,7 +388,6 @@ foreach ($allitems as $value) {
   } 
 }
 
-/* (bank display disabled)
 //dump bank items ICONS
 if (!$mypermission['bank']) {
 	foreach ($allitems as $value) {
@@ -390,12 +399,11 @@ if (!$mypermission['bank']) {
 	    );
 	}
 }
-*/
 
 //dump items WINDOWS
 foreach ($allitems as $value) {
-  if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-  //if ($value->type() == BANK && $mypermission['bank']) continue;
+  if (($value->type() == INVENTORY || ($value->type() > 21 && $value->type() < 30)) && $mypermission['bags']) continue; 
+  if (($value->type() == BANK || ($value->type() > 1999 && $value->type() < 2024))&& $mypermission['bank']) continue;
     $template->assign_block_vars("item", array(
       'SLOT' => $value->slot(),	   
       'NAME' => $value->name(),

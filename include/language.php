@@ -354,7 +354,7 @@ $language['FLAG_PoP_Cipher'] = "You hailed Grand Librarian Maelin and completed 
 $language['FLAG_PoP_KoS'] = "You have killed The Keeper of Sorrows."; 
 $language['FLAG_PoP_PoFire'] = "Plane of Fire"; 
 $language['FLAG_PoP_MaelinInfo1'] = "You asked Grand Librarian about the Zek Brother's information."; 
-$language['FLAG_PoP_RZ'] = "You have killed Ralloz Zek the Warlord."; 
+$language['FLAG_PoP_RZ'] = "You have killed Rallos Zek the Warlord."; 
 $language['FLAG_PoP_Arlyxir'] = "You have defeated Arlyxir within the Tower of Solusk Ro."; 
 $language['FLAG_PoP_Dresolik'] = "You have defeated The Protector of Dresolik within the Tower of Solusk Ro."; 
 $language['FLAG_PoP_Jiva'] = "You have defeated Jiva within the Tower of Solusk Ro."; 
@@ -374,6 +374,7 @@ $language['FLAG_PoP_Coirnav'] = "You have defeated Coirnav, the Avatar of Water.
 $language['FLAG_PoP_Arbitor'] = "You have defeated the arbitor within Plane of Earth A."; 
 $language['FLAG_PoP_Rathe'] = "You have defeated the Rathe Council within Plane of Earth B"; 
 $language['FLAG_PoP_Time'] = "You used Maelin's impressive machine to enter the Plane of Time."; 
+$language['FLAG_PoP_Checklist'] = "Checklist flags.";
 
 /************* GoD Flags for Progression ************* 
    Updated by Sorvani 
